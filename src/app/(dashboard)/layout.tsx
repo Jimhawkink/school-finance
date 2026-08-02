@@ -49,12 +49,13 @@ const Icon = ({ name }:{name:string}) => {
 export default function DashboardLayout({ children }:{children:React.ReactNode}) {
   const router = useRouter();
   const pathname = usePathname();
-  const [user, setUser] = useState<any>(null);
-  const [schoolId, setSchoolId] = useState('');
+  const [user, setUser]           = useState<any>(null);
+  const [schoolId, setSchoolId]   = useState('');
   const [schoolName, setSchoolName] = useState('');
-  const [yearId, setYearId] = useState('');
+  const [yearId, setYearId]       = useState('');
   const [yearLabel, setYearLabel] = useState('');
-  const [years, setYears] = useState<any[]>([]);
+  const [years, setYears]         = useState<any[]>([]);
+  const [collapsed, setCollapsed] = useState(false);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
@@ -81,73 +82,142 @@ export default function DashboardLayout({ children }:{children:React.ReactNode})
     router.push('/login');
   }
 
+  const sidebarWidth = collapsed ? 64 : 220;
+
   return (
     <AppContext.Provider value={{ schoolId, yearId, yearLabel, schoolName, setYear:(id,lbl)=>{setYearId(id);setYearLabel(lbl);} }}>
       <style>{`
-        .sidebar { background: #ffffff !important; border-right: 1px solid #dde6f5 !important; }
-        .sidebar-logo { background: #ffffff !important; }
-        .nav-item { color: #475569 !important; }
-        .nav-item:hover { background: #f0f5ff !important; }
-        .nav-item.active { color: #2563eb !important; background: #dbeafe !important; }
-        .nav-section-label { color: #94a3b8 !important; }
-        .page-header { background: #ffffff !important; border-bottom: 1px solid #dde6f5 !important; }
-        .main-content { background: #f0f5ff !important; }
+        * { box-sizing: border-box; }
+        .sidebar { background:#ffffff !important; border-right:1px solid #dde6f5 !important; transition: width 0.25s ease; overflow:hidden; }
+        .nav-item { color:#475569 !important; transition: background 0.15s; white-space:nowrap; }
+        .nav-item:hover { background:#f0f5ff !important; }
+        .nav-item.active { color:#2563eb !important; background:#dbeafe !important; }
+        .nav-section-label { color:#94a3b8 !important; white-space:nowrap; overflow:hidden; }
+        .page-header { background:#ffffff !important; border-bottom:1px solid #dde6f5 !important; }
+        .main-content { background:#f0f5ff !important; }
+        .collapse-btn {
+          position: absolute;
+          right: -14px;
+          top: 50%;
+          transform: translateY(-50%);
+          width: 28px;
+          height: 28px;
+          background: #ffffff;
+          border: 1px solid #dde6f5;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          z-index: 10;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+          transition: background 0.2s, box-shadow 0.2s;
+          flex-shrink: 0;
+        }
+        .collapse-btn:hover {
+          background: #dbeafe;
+          box-shadow: 0 4px 12px rgba(37,99,235,0.2);
+        }
+        .sidebar-inner-label {
+          transition: opacity 0.2s, width 0.2s;
+        }
       `}</style>
-      <div style={{ display:'flex', minHeight: '100vh', background: '#f0f5ff' }}>
+
+      <div style={{ display:'flex', minHeight:'100vh', background:'#f0f5ff' }}>
+
         {/* Sidebar */}
-        <div className="sidebar" style={{ background: '#ffffff', borderRight: '1px solid #dde6f5' }}>
-          <div className="sidebar-logo" style={{ background: '#ffffff' }}>
-            <div style={{ display:'flex', alignItems:'center', gap:12 }}>
-              <div style={{ width:38, height:38, background:'linear-gradient(135deg,#2563eb,#7c3aed)', borderRadius:10, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
+        <div className="sidebar" style={{ width: sidebarWidth, minWidth: sidebarWidth, position:'relative', flexShrink:0 }}>
+
+          {/* Collapse toggle button */}
+          <button
+            className="collapse-btn no-print"
+            onClick={() => setCollapsed(c => !c)}
+            title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+          >
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="3" strokeLinecap="round">
+              {collapsed
+                ? <><polyline points="9 18 15 12 9 6"/></>
+                : <><polyline points="15 18 9 12 15 6"/></>
+              }
+            </svg>
+          </button>
+
+          {/* Logo */}
+          <div className="sidebar-logo" style={{ background:'#ffffff', padding:'16px', borderBottom:'1px solid #dde6f5' }}>
+            <div style={{ display:'flex', alignItems:'center', gap:10, overflow:'hidden' }}>
+              <div style={{ width:36, height:36, background:'linear-gradient(135deg,#2563eb,#7c3aed)', borderRadius:10, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
               </div>
-              <div>
-                <div style={{ fontWeight:800, fontSize:14, color:'#0f172a', lineHeight:1.2 }}>SchoolFinance</div>
-                <div style={{ fontSize:10, color:'#475569', fontWeight:500 }}>Pro System</div>
-              </div>
+              {!collapsed && (
+                <div style={{ overflow:'hidden' }}>
+                  <div style={{ fontWeight:800, fontSize:13, color:'#0f172a', lineHeight:1.2, whiteSpace:'nowrap' }}>SchoolFinance</div>
+                  <div style={{ fontSize:10, color:'#475569', fontWeight:500 }}>Pro System</div>
+                </div>
+              )}
             </div>
           </div>
 
           {/* Year selector */}
-          {years.length > 0 && (
-            <div style={{ padding:'12px 16px', borderBottom:'1px solid #dde6f5', background: '#ffffff' }}>
-              <div style={{ fontSize:10, color:'#94a3b8', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:6 }}>Financial Year</div>
-              <select className="form-select" style={{ padding:'7px 12px', fontSize:13, background: '#ffffff', color: '#0f172a', border: '1px solid #dde6f5' }} value={yearId} onChange={e=>{
-                const y=years.find((x:any)=>x.id===e.target.value);
-                if(y){setYearId(y.id);setYearLabel(y.year_label);}
-              }}>
+          {!collapsed && years.length > 0 && (
+            <div style={{ padding:'10px 12px', borderBottom:'1px solid #dde6f5', background:'#ffffff' }}>
+              <div style={{ fontSize:10, color:'#94a3b8', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:5 }}>Financial Year</div>
+              <select className="form-select" style={{ padding:'6px 10px', fontSize:12, background:'#ffffff', color:'#0f172a', border:'1px solid #dde6f5', width:'100%' }}
+                value={yearId} onChange={e=>{
+                  const y=years.find((x:any)=>x.id===e.target.value);
+                  if(y){setYearId(y.id);setYearLabel(y.year_label);}
+                }}>
                 {years.map((y:any)=><option key={y.id} value={y.id}>{y.year_label}</option>)}
               </select>
             </div>
           )}
 
+          {/* Nav */}
           <nav className="sidebar-nav">
             {NAV.map(group => (
               <div key={group.section}>
-                <div className="nav-section-label" style={{ color: '#94a3b8' }}>{group.section}</div>
+                {!collapsed && (
+                  <div className="nav-section-label" style={{ color:'#94a3b8', fontSize:10, fontWeight:700, padding:'12px 16px 4px', letterSpacing:'0.08em', textTransform:'uppercase' }}>
+                    {group.section}
+                  </div>
+                )}
+                {collapsed && <div style={{ height:8 }} />}
                 {group.items.map(item => (
-                  <Link key={item.href} href={item.href} className={`nav-item ${pathname?.startsWith(item.href) ? 'active' : ''}`}>
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={`nav-item ${pathname?.startsWith(item.href) ? 'active' : ''}`}
+                    title={collapsed ? item.label : ''}
+                    style={{ display:'flex', alignItems:'center', gap:10, padding: collapsed ? '10px 0' : '9px 16px', justifyContent: collapsed ? 'center' : 'flex-start' }}
+                  >
                     <Icon name={item.icon} />
-                    {item.label}
+                    {!collapsed && <span style={{ fontSize:13, fontWeight:500 }}>{item.label}</span>}
                   </Link>
                 ))}
               </div>
             ))}
           </nav>
 
-          <div style={{ padding:'12px 16px', borderTop:'1px solid #dde6f5', background: '#ffffff' }}>
-            <div style={{ fontSize:12, color:'#475569', marginBottom:10, fontWeight:500, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{user?.email}</div>
-            <button onClick={handleLogout} className="nav-item" style={{ color:'#dc2626', width:'100%' }}>
+          {/* Footer */}
+          <div style={{ padding: collapsed ? '10px 0' : '12px 16px', borderTop:'1px solid #dde6f5', background:'#ffffff' }}>
+            {!collapsed && (
+              <div style={{ fontSize:11, color:'#475569', marginBottom:8, fontWeight:500, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{user?.email}</div>
+            )}
+            <button
+              onClick={handleLogout}
+              className="nav-item"
+              title={collapsed ? 'Sign Out' : ''}
+              style={{ color:'#dc2626', width:'100%', display:'flex', alignItems:'center', gap:10, padding: collapsed ? '8px 0' : '8px 12px', justifyContent: collapsed ? 'center' : 'flex-start', background:'transparent', border:'none', cursor:'pointer', borderRadius:8 }}
+            >
               <Icon name="logout" />
-              Sign Out
+              {!collapsed && <span style={{ fontSize:13, fontWeight:500 }}>Sign Out</span>}
             </button>
           </div>
         </div>
 
-        {/* Main */}
-        <div className="main-content" style={{ flex:1, background: '#f0f5ff' }}>
+        {/* Main content */}
+        <div className="main-content" style={{ flex:1, background:'#f0f5ff', minWidth:0 }}>
           {/* Top bar */}
-          <div className="page-header no-print" style={{ background: '#ffffff', borderBottom: '1px solid #dde6f5' }}>
+          <div className="page-header no-print" style={{ background:'#ffffff', borderBottom:'1px solid #dde6f5' }}>
             <div>
               <div style={{ fontWeight:700, fontSize:15, color:'#0f172a' }}>{schoolName || 'Set up your school →'}</div>
               <div style={{ fontSize:12, color:'#475569' }}>Financial Year: {yearLabel || 'None selected'}</div>
