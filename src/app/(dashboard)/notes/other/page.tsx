@@ -37,7 +37,7 @@ type NoteRow = { id?:string; note_number:number; row_label:string; current_amoun
 
 export default function NotesOtherPage() {
   const { schoolId, yearId, yearLabel } = useApp();
-  const [rows, setRows]     = useState<NoteRow[]>([]);
+  const [rows, setRows]     = useState<NoteRow[]>(buildTemplate());
   const [saving, setSaving] = useState(false);
   const [narrative, setNarrative] = useState('');
 

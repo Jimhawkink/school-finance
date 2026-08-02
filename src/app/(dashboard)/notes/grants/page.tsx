@@ -30,9 +30,17 @@ const NOTE_DEFS = [
 
 type NoteRow = { id?:string; note_number:number; row_label:string; current_amount:number; previous_amount:number; sort_order:number; };
 
+function buildTemplate(): Record<number, NoteRow[]> {
+  const out: Record<number, NoteRow[]> = {};
+  for (const def of NOTE_DEFS) {
+    out[def.num] = def.rows.map((label, i) => ({ note_number: def.num, row_label: label, current_amount: 0, previous_amount: 0, sort_order: i }));
+  }
+  return out;
+}
+
 export default function NotesGrantsPage() {
   const { schoolId, yearId, yearLabel } = useApp();
-  const [data, setData] = useState<Record<number, NoteRow[]>>({});
+  const [data, setData] = useState<Record<number, NoteRow[]>>(buildTemplate());
   const [saving, setSaving] = useState<number|null>(null);
 
   useEffect(() => { if (yearId) load(); }, [yearId]);

@@ -7,13 +7,33 @@ import toast from 'react-hot-toast';
 type School = { id?:string; name:string; district:string; county:string; school_type:string; principal_name:string; bom_chairperson:string; index_no?:string; postal_address?:string; phone?:string; email?:string; };
 type Year   = { id?:string; year_label:string; start_date:string; end_date:string; is_current:boolean; is_locked:boolean; };
 
+// ✅ Defined OUTSIDE the page component — prevents input losing focus on every keystroke
+function Field({ label, value, onChange, type='text', required=false }: {
+  label: string; value: string; onChange: (v:string)=>void; type?:string; required?:boolean;
+}) {
+  return (
+    <div className="form-group">
+      <label className="form-label" style={{ color:'#475569', fontWeight:600 }}>
+        {label}{required && <span style={{ color:'#dc2626' }}> *</span>}
+      </label>
+      <input
+        className="form-input setup-input"
+        type={type}
+        value={value}
+        onChange={e => onChange(e.target.value)}
+        required={required}
+      />
+    </div>
+  );
+}
+
 export default function SetupPage() {
   const { schoolId } = useApp();
-  const [tab, setTab]             = useState<'school'|'years'>('school');
-  const [school, setSchool]       = useState<School>({ name:'', district:'', county:'', school_type:'Secondary', principal_name:'', bom_chairperson:'' });
-  const [years, setYears]         = useState<Year[]>([]);
-  const [newYear, setNewYear]     = useState<Year>({ year_label:'', start_date:'', end_date:'', is_current:false, is_locked:false });
-  const [saving, setSaving]       = useState(false);
+  const [tab, setTab]               = useState<'school'|'years'>('school');
+  const [school, setSchool]         = useState<School>({ name:'', district:'', county:'', school_type:'Secondary', principal_name:'', bom_chairperson:'' });
+  const [years, setYears]           = useState<Year[]>([]);
+  const [newYear, setNewYear]       = useState<Year>({ year_label:'', start_date:'', end_date:'', is_current:false, is_locked:false });
+  const [saving, setSaving]         = useState(false);
   const [addingYear, setAddingYear] = useState(false);
 
   useEffect(() => { loadAll(); }, []);
@@ -74,53 +94,34 @@ export default function SetupPage() {
     toast.success(yr.is_locked ? 'Year unlocked' : 'Year locked');
   }
 
-  const F = ({ label, value, onChange, type='text', required=false }: any) => (
-    <div className="form-group">
-      <label className="form-label" style={{ color: '#475569', fontWeight: 600 }}>{label}{required && <span style={{ color:'#dc2626' }}> *</span>}</label>
-      <input className="form-input setup-input" type={type} value={value} onChange={e => onChange(e.target.value)} required={required} />
-    </div>
-  );
-
   return (
     <div className="page-body" style={{ background: '#f0f5ff', minHeight: '100vh' }}>
       <style>{`
         .setup-input {
           background: #fff;
-          border: 1px solid #dde6f5;
+          border: 2px solid #dde6f5;
           border-radius: 8px;
           color: #0f172a;
-          padding: 8px 12px;
+          padding: 10px 14px;
           width: 100%;
           box-sizing: border-box;
           outline: none;
-          transition: border-color 0.2s;
+          font-size: 14px;
+          font-family: inherit;
+          transition: border-color 0.2s, box-shadow 0.2s;
         }
         .setup-input:focus {
           border-color: #2563eb;
+          box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
         }
-        .form-select.setup-input {
-          appearance: auto;
-        }
-        .light-table th {
-          background: #f1f5fd;
-          color: #475569;
-          font-weight: 700;
-          padding: 12px;
-          border-bottom: 1px solid #dde6f5;
-          text-align: left;
-        }
-        .light-table td {
-          padding: 12px;
-          border-bottom: 1px solid #dde6f5;
-          color: #0f172a;
-        }
-        .light-table tr {
-          background: #fff;
-        }
-        .light-table tr:hover {
-          background: #f5f8ff;
-        }
+        .form-select.setup-input { appearance: auto; }
+        .light-table { width:100%; border-collapse:collapse; }
+        .light-table th { background:#f1f5fd; color:#475569; font-weight:700; padding:12px; border-bottom:1px solid #dde6f5; text-align:left; }
+        .light-table td { padding:12px; border-bottom:1px solid #dde6f5; color:#0f172a; }
+        .light-table tr { background:#fff; }
+        .light-table tr:hover { background:#f5f8ff; }
       `}</style>
+
       <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:24 }}>
         <div>
           <h1 style={{ fontSize:22, fontWeight:800, color:'#0f172a' }}>⚙️ School Setup</h1>
@@ -137,26 +138,28 @@ export default function SetupPage() {
       {tab === 'school' && (
         <div className="glass" style={{ padding:32, background:'#fff', border:'1px solid #dde6f5', borderRadius:16 }}>
           <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:20 }}>
-            <F label="School Name" value={school.name} onChange={(v:string) => setSchool(p=>({...p,name:v}))} required />
-            <F label="School Index No." value={school.index_no||''} onChange={(v:string) => setSchool(p=>({...p,index_no:v}))} />
-            <F label="District" value={school.district} onChange={(v:string) => setSchool(p=>({...p,district:v}))} required />
-            <F label="County" value={school.county} onChange={(v:string) => setSchool(p=>({...p,county:v}))} required />
+            <Field label="School Name"    value={school.name}              onChange={v => setSchool(p=>({...p,name:v}))}              required />
+            <Field label="School Index No." value={school.index_no||''}   onChange={v => setSchool(p=>({...p,index_no:v}))} />
+            <Field label="District"       value={school.district}          onChange={v => setSchool(p=>({...p,district:v}))}           required />
+            <Field label="County"         value={school.county}            onChange={v => setSchool(p=>({...p,county:v}))}             required />
             <div className="form-group">
-              <label className="form-label" style={{ color: '#475569', fontWeight: 600 }}>School Type</label>
+              <label className="form-label" style={{ color:'#475569', fontWeight:600 }}>School Type</label>
               <select className="form-select setup-input" value={school.school_type} onChange={e => setSchool(p=>({...p,school_type:e.target.value}))}>
                 <option>Secondary</option>
                 <option>Primary</option>
                 <option>ECDE</option>
               </select>
             </div>
-            <F label="Postal Address" value={school.postal_address||''} onChange={(v:string) => setSchool(p=>({...p,postal_address:v}))} />
-            <F label="Phone" value={school.phone||''} onChange={(v:string) => setSchool(p=>({...p,phone:v}))} />
-            <F label="Email" type="email" value={school.email||''} onChange={(v:string) => setSchool(p=>({...p,email:v}))} />
-            <F label="Principal Name" value={school.principal_name} onChange={(v:string) => setSchool(p=>({...p,principal_name:v}))} required />
-            <F label="BOM Chairperson" value={school.bom_chairperson} onChange={(v:string) => setSchool(p=>({...p,bom_chairperson:v}))} required />
+            <Field label="Postal Address" value={school.postal_address||''} onChange={v => setSchool(p=>({...p,postal_address:v}))} />
+            <Field label="Phone"          value={school.phone||''}          onChange={v => setSchool(p=>({...p,phone:v}))} />
+            <Field label="Email"          type="email" value={school.email||''} onChange={v => setSchool(p=>({...p,email:v}))} />
+            <Field label="Principal Name"  value={school.principal_name}   onChange={v => setSchool(p=>({...p,principal_name:v}))}     required />
+            <Field label="BOM Chairperson" value={school.bom_chairperson}  onChange={v => setSchool(p=>({...p,bom_chairperson:v}))}   required />
           </div>
           <div style={{ marginTop:28, display:'flex', justifyContent:'flex-end' }}>
-            <button className="btn-primary" onClick={saveSchool} disabled={saving}>{saving?'Saving…':'💾 Save School Details'}</button>
+            <button className="btn-primary" onClick={saveSchool} disabled={saving}>
+              {saving ? 'Saving…' : '💾 Save School Details'}
+            </button>
           </div>
         </div>
       )}
@@ -168,15 +171,15 @@ export default function SetupPage() {
             <h2 style={{ fontSize:16, fontWeight:700, color:'#0f172a', marginBottom:20 }}>➕ Add Financial Year</h2>
             <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr 1fr auto', gap:16, alignItems:'end' }}>
               <div className="form-group">
-                <label className="form-label" style={{ color: '#475569', fontWeight: 600 }}>Year Label <span style={{color:'#dc2626'}}>*</span></label>
+                <label className="form-label" style={{ color:'#475569', fontWeight:600 }}>Year Label <span style={{color:'#dc2626'}}>*</span></label>
                 <input className="form-input setup-input" placeholder="e.g. 2024/2025" value={newYear.year_label} onChange={e => setNewYear(p=>({...p,year_label:e.target.value}))} />
               </div>
               <div className="form-group">
-                <label className="form-label" style={{ color: '#475569', fontWeight: 600 }}>Start Date</label>
+                <label className="form-label" style={{ color:'#475569', fontWeight:600 }}>Start Date</label>
                 <input className="form-input setup-input" type="date" value={newYear.start_date} onChange={e => setNewYear(p=>({...p,start_date:e.target.value}))} />
               </div>
               <div className="form-group">
-                <label className="form-label" style={{ color: '#475569', fontWeight: 600 }}>End Date</label>
+                <label className="form-label" style={{ color:'#475569', fontWeight:600 }}>End Date</label>
                 <input className="form-input setup-input" type="date" value={newYear.end_date} onChange={e => setNewYear(p=>({...p,end_date:e.target.value}))} />
               </div>
               <div style={{ display:'flex', flexDirection:'column', gap:10 }}>
@@ -200,14 +203,10 @@ export default function SetupPage() {
                 <div style={{ fontSize:14 }}>No financial years yet. Add one above.</div>
               </div>
             ) : (
-              <table className="data-grid light-table" style={{ width: '100%', borderCollapse: 'collapse' }}>
+              <table className="data-grid light-table" style={{ width:'100%', borderCollapse:'collapse' }}>
                 <thead>
                   <tr>
-                    <th>Year Label</th>
-                    <th>Start Date</th>
-                    <th>End Date</th>
-                    <th>Status</th>
-                    <th style={{ textAlign:'center' }}>Actions</th>
+                    <th>Year Label</th><th>Start Date</th><th>End Date</th><th>Status</th><th style={{ textAlign:'center' }}>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -226,7 +225,7 @@ export default function SetupPage() {
                       <td>
                         <div style={{ display:'flex', gap:8, justifyContent:'center' }}>
                           {!yr.is_current && (
-                            <button className="btn-ghost" style={{ padding:'5px 12px', fontSize:12, color: '#475569' }} onClick={() => setCurrent(yr)}>Set Current</button>
+                            <button className="btn-ghost" style={{ padding:'5px 12px', fontSize:12, color:'#475569' }} onClick={() => setCurrent(yr)}>Set Current</button>
                           )}
                           <button className="btn-ghost" style={{ padding:'5px 12px', fontSize:12, color: yr.is_locked?'#059669':'#f59e0b' }} onClick={() => toggleLock(yr)}>
                             {yr.is_locked ? '🔓 Unlock' : '🔒 Lock'}

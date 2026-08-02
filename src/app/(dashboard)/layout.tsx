@@ -21,10 +21,10 @@ const NAV = [
     { href:'/budget',            icon:'target',  label:'Budget Analysis' },
   ]},
   { section:'NOTES',      items:[
-    { href:'/notes/grants',      icon:'file',    label:'Notes 1-5 · Grants' },
-    { href:'/notes/expenditure', icon:'file',    label:'Notes 6-9 · Expenditure' },
-    { href:'/notes/accounts',    icon:'file',    label:'Notes 10-15 · Accounts' },
-    { href:'/notes/other',       icon:'file',    label:'Notes 17 · Other' },
+    { href:'/notes/grants',      icon:'file',    label:'Grants' },
+    { href:'/notes/expenditure', icon:'file',    label:'Expenditure' },
+    { href:'/notes/accounts',    icon:'file',    label:'Accounts' },
+    { href:'/notes/other',       icon:'file',    label:'Other' },
   ]},
   { section:'REPORTS',    items:[
     { href:'/reports',           icon:'printer', label:'Generate Reports' },
