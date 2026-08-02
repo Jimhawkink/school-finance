@@ -157,8 +157,8 @@ export default function NotesGrantsPage() {
               <thead>
                 <tr>
                   <th>Description</th>
-                  <th style={{ width:200, textAlign:'right' }}>✏️ Enter Amount<br/><span style={{fontSize:11,fontWeight:normal}}>Current Year (KES)</span></th>
-                  <th style={{ width:200, textAlign:'right' }}>✏️ Enter Amount<br/><span style={{fontSize:11,fontWeight:normal}}>Previous Year (KES)</span></th>
+                  <th style={{ width:200, textAlign:'right' }}>✏️ Enter Amount<br/><span style={{fontSize:11,fontWeight:'normal'}}>Current Year (KES)</span></th>
+                  <th style={{ width:200, textAlign:'right' }}>✏️ Enter Amount<br/><span style={{fontSize:11,fontWeight:'normal'}}>Previous Year (KES)</span></th>
                 </tr>
               </thead>
               <tbody>
