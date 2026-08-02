@@ -47,15 +47,15 @@ const Icon = ({ name }:{name:string}) => {
 };
 
 export default function DashboardLayout({ children }:{children:React.ReactNode}) {
-  const router = useRouter();
+  const router   = useRouter();
   const pathname = usePathname();
-  const [user, setUser]           = useState<any>(null);
-  const [schoolId, setSchoolId]   = useState('');
+  const [user, setUser]             = useState<any>(null);
+  const [schoolId, setSchoolId]     = useState('');
   const [schoolName, setSchoolName] = useState('');
-  const [yearId, setYearId]       = useState('');
-  const [yearLabel, setYearLabel] = useState('');
-  const [years, setYears]         = useState<any[]>([]);
-  const [collapsed, setCollapsed] = useState(false);
+  const [yearId, setYearId]         = useState('');
+  const [yearLabel, setYearLabel]   = useState('');
+  const [years, setYears]           = useState<any[]>([]);
+  const [collapsed, setCollapsed]   = useState(false);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
@@ -82,115 +82,76 @@ export default function DashboardLayout({ children }:{children:React.ReactNode})
     router.push('/login');
   }
 
-  const sidebarWidth = collapsed ? 64 : 220;
+  const W = collapsed ? 60 : 220;
 
   return (
     <AppContext.Provider value={{ schoolId, yearId, yearLabel, schoolName, setYear:(id,lbl)=>{setYearId(id);setYearLabel(lbl);} }}>
       <style>{`
-        * { box-sizing: border-box; }
-        .sidebar { background:#ffffff !important; border-right:1px solid #dde6f5 !important; transition: width 0.25s ease; overflow:hidden; }
-        .nav-item { color:#475569 !important; transition: background 0.15s; white-space:nowrap; }
-        .nav-item:hover { background:#f0f5ff !important; }
-        .nav-item.active { color:#2563eb !important; background:#dbeafe !important; }
-        .nav-section-label { color:#94a3b8 !important; white-space:nowrap; overflow:hidden; }
-        .page-header { background:#ffffff !important; border-bottom:1px solid #dde6f5 !important; }
-        .main-content { background:#f0f5ff !important; }
-        .collapse-btn {
-          position: absolute;
-          right: -14px;
-          top: 50%;
-          transform: translateY(-50%);
-          width: 28px;
-          height: 28px;
-          background: #ffffff;
-          border: 1px solid #dde6f5;
-          border-radius: 50%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          cursor: pointer;
-          z-index: 10;
-          box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-          transition: background 0.2s, box-shadow 0.2s;
-          flex-shrink: 0;
-        }
-        .collapse-btn:hover {
-          background: #dbeafe;
-          box-shadow: 0 4px 12px rgba(37,99,235,0.2);
-        }
-        .sidebar-inner-label {
-          transition: opacity 0.2s, width 0.2s;
-        }
+        .sidebar { background:#fff; border-right:1px solid #dde6f5; width:${W}px; min-width:${W}px; max-width:${W}px; transition:width .22s ease,min-width .22s ease,max-width .22s ease; overflow:hidden; display:flex; flex-direction:column; flex-shrink:0; }
+        .nav-item { color:#475569!important; white-space:nowrap; display:flex; align-items:center; gap:10px; text-decoration:none; border-radius:8px; margin:1px 6px; padding:9px 10px; font-size:13px; font-weight:500; transition:background .15s; }
+        .nav-item:hover { background:#f0f5ff!important; }
+        .nav-item.active { color:#2563eb!important; background:#dbeafe!important; }
+        .nav-section-label { font-size:10px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:#94a3b8!important; padding:12px 14px 3px; white-space:nowrap; }
+        .page-header { background:#fff!important; border-bottom:1px solid #dde6f5!important; display:flex; align-items:center; justify-content:space-between; padding:12px 24px; }
+        .main-content { background:#f0f5ff!important; }
+        .toggle-btn { width:24px; height:24px; border-radius:50%; background:#fff; border:1px solid #dde6f5; display:flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 1px 6px rgba(0,0,0,.1); transition:background .15s; flex-shrink:0; padding:0; }
+        .toggle-btn:hover { background:#dbeafe; }
       `}</style>
 
       <div style={{ display:'flex', minHeight:'100vh', background:'#f0f5ff' }}>
 
-        {/* Sidebar */}
-        <div className="sidebar" style={{ width: sidebarWidth, minWidth: sidebarWidth, position:'relative', flexShrink:0 }}>
+        {/* ── Sidebar ── */}
+        <div className="sidebar">
 
-          {/* Collapse toggle button */}
-          <button
-            className="collapse-btn no-print"
-            onClick={() => setCollapsed(c => !c)}
-            title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-          >
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="3" strokeLinecap="round">
-              {collapsed
-                ? <><polyline points="9 18 15 12 9 6"/></>
-                : <><polyline points="15 18 9 12 15 6"/></>
-              }
-            </svg>
-          </button>
-
-          {/* Logo */}
-          <div className="sidebar-logo" style={{ background:'#ffffff', padding:'16px', borderBottom:'1px solid #dde6f5' }}>
+          {/* Logo + toggle on same row */}
+          <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'14px 10px', borderBottom:'1px solid #dde6f5', background:'#fff', flexShrink:0 }}>
             <div style={{ display:'flex', alignItems:'center', gap:10, overflow:'hidden' }}>
-              <div style={{ width:36, height:36, background:'linear-gradient(135deg,#2563eb,#7c3aed)', borderRadius:10, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
+              <div style={{ width:34,height:34,background:'linear-gradient(135deg,#2563eb,#7c3aed)',borderRadius:9,display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0 }}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
               </div>
               {!collapsed && (
                 <div style={{ overflow:'hidden' }}>
-                  <div style={{ fontWeight:800, fontSize:13, color:'#0f172a', lineHeight:1.2, whiteSpace:'nowrap' }}>SchoolFinance</div>
-                  <div style={{ fontSize:10, color:'#475569', fontWeight:500 }}>Pro System</div>
+                  <div style={{ fontWeight:800,fontSize:13,color:'#0f172a',whiteSpace:'nowrap' }}>SchoolFinance</div>
+                  <div style={{ fontSize:10,color:'#475569',fontWeight:500 }}>Pro System</div>
                 </div>
               )}
             </div>
+            <button className="toggle-btn no-print" onClick={() => setCollapsed(c=>!c)} title={collapsed?'Expand':'Collapse'}>
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                {collapsed ? <polyline points="9 18 15 12 9 6"/> : <polyline points="15 18 9 12 15 6"/>}
+              </svg>
+            </button>
           </div>
 
           {/* Year selector */}
           {!collapsed && years.length > 0 && (
-            <div style={{ padding:'10px 12px', borderBottom:'1px solid #dde6f5', background:'#ffffff' }}>
-              <div style={{ fontSize:10, color:'#94a3b8', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:5 }}>Financial Year</div>
-              <select className="form-select" style={{ padding:'6px 10px', fontSize:12, background:'#ffffff', color:'#0f172a', border:'1px solid #dde6f5', width:'100%' }}
-                value={yearId} onChange={e=>{
-                  const y=years.find((x:any)=>x.id===e.target.value);
-                  if(y){setYearId(y.id);setYearLabel(y.year_label);}
-                }}>
+            <div style={{ padding:'10px 10px', borderBottom:'1px solid #dde6f5', background:'#fff', flexShrink:0 }}>
+              <div style={{ fontSize:10,color:'#94a3b8',fontWeight:700,textTransform:'uppercase',letterSpacing:'.08em',marginBottom:5 }}>Financial Year</div>
+              <select className="form-select" style={{ padding:'6px 8px',fontSize:12,background:'#fff',color:'#0f172a',border:'1px solid #dde6f5',width:'100%',borderRadius:7 }}
+                value={yearId} onChange={e=>{const y=years.find((x:any)=>x.id===e.target.value);if(y){setYearId(y.id);setYearLabel(y.year_label);}}}>
                 {years.map((y:any)=><option key={y.id} value={y.id}>{y.year_label}</option>)}
               </select>
             </div>
           )}
 
-          {/* Nav */}
-          <nav className="sidebar-nav">
+          {/* Nav links */}
+          <nav style={{ flex:1, overflowY:'auto', overflowX:'hidden', paddingTop:4 }}>
             {NAV.map(group => (
               <div key={group.section}>
-                {!collapsed && (
-                  <div className="nav-section-label" style={{ color:'#94a3b8', fontSize:10, fontWeight:700, padding:'12px 16px 4px', letterSpacing:'0.08em', textTransform:'uppercase' }}>
-                    {group.section}
-                  </div>
-                )}
-                {collapsed && <div style={{ height:8 }} />}
+                {!collapsed
+                  ? <div className="nav-section-label">{group.section}</div>
+                  : <div style={{ height:10 }} />
+                }
                 {group.items.map(item => (
                   <Link
                     key={item.href}
                     href={item.href}
-                    className={`nav-item ${pathname?.startsWith(item.href) ? 'active' : ''}`}
+                    className={`nav-item ${pathname?.startsWith(item.href)?'active':''}`}
                     title={collapsed ? item.label : ''}
-                    style={{ display:'flex', alignItems:'center', gap:10, padding: collapsed ? '10px 0' : '9px 16px', justifyContent: collapsed ? 'center' : 'flex-start' }}
+                    style={{ justifyContent: collapsed ? 'center' : 'flex-start', padding: collapsed ? '10px 0' : '9px 10px' }}
                   >
                     <Icon name={item.icon} />
-                    {!collapsed && <span style={{ fontSize:13, fontWeight:500 }}>{item.label}</span>}
+                    {!collapsed && item.label}
                   </Link>
                 ))}
               </div>
@@ -198,39 +159,34 @@ export default function DashboardLayout({ children }:{children:React.ReactNode})
           </nav>
 
           {/* Footer */}
-          <div style={{ padding: collapsed ? '10px 0' : '12px 16px', borderTop:'1px solid #dde6f5', background:'#ffffff' }}>
+          <div style={{ padding: collapsed ? '10px 0' : '10px', borderTop:'1px solid #dde6f5', background:'#fff', flexShrink:0 }}>
             {!collapsed && (
-              <div style={{ fontSize:11, color:'#475569', marginBottom:8, fontWeight:500, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{user?.email}</div>
+              <div style={{ fontSize:11,color:'#475569',fontWeight:500,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',marginBottom:6,paddingLeft:4 }}>{user?.email}</div>
             )}
-            <button
-              onClick={handleLogout}
-              className="nav-item"
-              title={collapsed ? 'Sign Out' : ''}
-              style={{ color:'#dc2626', width:'100%', display:'flex', alignItems:'center', gap:10, padding: collapsed ? '8px 0' : '8px 12px', justifyContent: collapsed ? 'center' : 'flex-start', background:'transparent', border:'none', cursor:'pointer', borderRadius:8 }}
-            >
-              <Icon name="logout" />
-              {!collapsed && <span style={{ fontSize:13, fontWeight:500 }}>Sign Out</span>}
+            <button onClick={handleLogout} className="nav-item"
+              title={collapsed?'Sign Out':''}
+              style={{ color:'#dc2626',width:'100%',background:'transparent',border:'none',cursor:'pointer',justifyContent:collapsed?'center':'flex-start',padding:collapsed?'10px 0':'9px 10px' }}>
+              <Icon name="logout"/>
+              {!collapsed && 'Sign Out'}
             </button>
           </div>
         </div>
 
-        {/* Main content */}
-        <div className="main-content" style={{ flex:1, background:'#f0f5ff', minWidth:0 }}>
-          {/* Top bar */}
-          <div className="page-header no-print" style={{ background:'#ffffff', borderBottom:'1px solid #dde6f5' }}>
+        {/* ── Main ── */}
+        <div className="main-content" style={{ flex:1, minWidth:0, display:'flex', flexDirection:'column' }}>
+          <div className="page-header no-print">
             <div>
-              <div style={{ fontWeight:700, fontSize:15, color:'#0f172a' }}>{schoolName || 'Set up your school →'}</div>
-              <div style={{ fontSize:12, color:'#475569' }}>Financial Year: {yearLabel || 'None selected'}</div>
+              <div style={{ fontWeight:700,fontSize:15,color:'#0f172a' }}>{schoolName||'Set up your school →'}</div>
+              <div style={{ fontSize:12,color:'#475569' }}>Financial Year: {yearLabel||'None selected'}</div>
             </div>
-            <div style={{ display:'flex', gap:8 }}>
-              <Link href="/reports" className="btn-primary" style={{ padding:'8px 16px', fontSize:13 }}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
-                Generate Report
-              </Link>
-            </div>
+            <Link href="/reports" className="btn-primary" style={{ padding:'8px 16px',fontSize:13,display:'flex',alignItems:'center',gap:6 }}>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+              Generate Report
+            </Link>
           </div>
-          {children}
+          <div style={{ flex:1 }}>{children}</div>
         </div>
+
       </div>
     </AppContext.Provider>
   );
