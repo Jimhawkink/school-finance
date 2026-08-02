@@ -1,96 +1,88 @@
 'use client';
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
+import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
 
 export default function LoginPage() {
-  const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [showPw, setShowPw] = useState(false);
+  const router = useRouter();
 
-  const handleLogin = async (e: React.FormEvent) => {
+  async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
+    const t = toast.loading('Signing in…');
     const { error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) {
-      toast.error(error.message);
-      setLoading(false);
-    } else {
-      toast.success('Welcome back!');
-      router.push('/dashboard');
-    }
-  };
+    if (error) { toast.error(error.message, { id: t }); setLoading(false); return; }
+    toast.success('Welcome back!', { id: t });
+    router.replace('/dashboard');
+  }
 
   return (
-    <div style={{ minHeight:'100vh', background:'#070b14', display:'flex', alignItems:'center', justifyContent:'center', padding:'20px', position:'relative', overflow:'hidden' }}>
-      {/* Animated background orbs */}
-      <div style={{ position:'absolute', width:600, height:600, background:'radial-gradient(circle, rgba(79,126,248,0.12) 0%, transparent 70%)', top:-100, left:-100, borderRadius:'50%', animation:'float 8s ease-in-out infinite' }} />
-      <div style={{ position:'absolute', width:500, height:500, background:'radial-gradient(circle, rgba(139,92,246,0.1) 0%, transparent 70%)', bottom:-100, right:-100, borderRadius:'50%', animation:'float 10s ease-in-out infinite reverse' }} />
+    <div style={{ minHeight:'100vh', background:'linear-gradient(135deg,#f0f5ff 0%,#e8f0fe 50%,#f5f0ff 100%)', display:'flex', alignItems:'center', justifyContent:'center', padding:24, fontFamily:"'Inter',sans-serif", position:'relative', overflow:'hidden' }}>
+      {/* Background decorations */}
+      <div style={{ position:'absolute', top:-120, right:-120, width:500, height:500, background:'radial-gradient(circle,rgba(37,99,235,0.07) 0%,transparent 70%)', borderRadius:'50%', pointerEvents:'none' }} />
+      <div style={{ position:'absolute', bottom:-100, left:-100, width:400, height:400, background:'radial-gradient(circle,rgba(124,58,237,0.06) 0%,transparent 70%)', borderRadius:'50%', pointerEvents:'none' }} />
 
-      <div style={{ width:'100%', maxWidth:460, position:'relative', zIndex:1 }}>
+      <div style={{ width:'100%', maxWidth:440, position:'relative', zIndex:1 }}>
         {/* Logo */}
         <div style={{ textAlign:'center', marginBottom:36 }}>
-          <div style={{ width:72, height:72, background:'linear-gradient(135deg, #4f7ef8, #8b5cf6)', borderRadius:20, display:'inline-flex', alignItems:'center', justifyContent:'center', marginBottom:16, boxShadow:'0 20px 60px rgba(79,126,248,0.4)' }}>
-            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2">
-              <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
-            </svg>
-          </div>
-          <h1 style={{ fontSize:28, fontWeight:800, color:'#e8edf8', letterSpacing:'-0.5px' }}>SchoolFinance Pro</h1>
-          <p style={{ color:'#7a90b8', fontSize:14, marginTop:6 }}>Secondary School Financial Management System</p>
+          <div style={{ width:64, height:64, background:'linear-gradient(135deg,#2563eb,#7c3aed)', borderRadius:20, display:'flex', alignItems:'center', justifyContent:'center', fontSize:32, margin:'0 auto 20px', boxShadow:'0 12px 32px rgba(37,99,235,0.35)' }}>🏫</div>
+          <h1 style={{ fontSize:28, fontWeight:900, color:'#0f172a', letterSpacing:'-0.5px', marginBottom:8 }}>SchoolFinance Pro</h1>
+          <p style={{ color:'#64748b', fontSize:14 }}>Secondary School Financial Management System</p>
         </div>
 
         {/* Card */}
-        <div style={{ background:'rgba(13,21,38,0.9)', border:'1px solid #1e2d4a', borderRadius:24, padding:36, backdropFilter:'blur(20px)', boxShadow:'0 40px 100px rgba(0,0,0,0.5)' }}>
-          <h2 style={{ fontSize:20, fontWeight:700, color:'#e8edf8', marginBottom:6 }}>Sign In</h2>
-          <p style={{ color:'#7a90b8', fontSize:13, marginBottom:28 }}>Enter your credentials to access the system</p>
+        <div style={{ background:'#fff', borderRadius:24, padding:'36px 40px', boxShadow:'0 20px 60px rgba(0,0,0,0.1)', border:'1px solid #e2e8f0' }}>
+          <h2 style={{ fontSize:20, fontWeight:800, color:'#0f172a', marginBottom:6 }}>Sign In</h2>
+          <p style={{ fontSize:13, color:'#64748b', marginBottom:28 }}>Enter your credentials to access the system</p>
 
           <form onSubmit={handleLogin}>
-            <div style={{ display:'flex', flexDirection:'column', gap:18 }}>
-              <div className="form-group">
-                <label className="form-label">Email Address</label>
-                <div style={{ position:'relative' }}>
-                  <span style={{ position:'absolute', left:14, top:'50%', transform:'translateY(-50%)', color:'#4a5f82' }}>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,12 2,6"/></svg>
-                  </span>
-                  <input className="form-input" type="email" placeholder="admin@school.ac.ke" value={email} onChange={e=>setEmail(e.target.value)} style={{ paddingLeft:42 }} required />
+            <div style={{ marginBottom:20 }}>
+              <label style={{ display:'block', fontSize:11, fontWeight:700, color:'#64748b', textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:8 }}>EMAIL ADDRESS</label>
+              <div style={{ position:'relative' }}>
+                <div style={{ position:'absolute', left:14, top:'50%', transform:'translateY(-50%)', color:'#94a3b8' }}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
                 </div>
+                <input type="email" value={email} onChange={e => setEmail(e.target.value)} required placeholder="admin@school.ac.ke"
+                  style={{ width:'100%', background:'#f8fafc', border:'2px solid #e2e8f0', borderRadius:10, padding:'12px 14px 12px 44px', fontSize:14, color:'#0f172a', outline:'none', transition:'all 0.2s', fontFamily:"'Inter',sans-serif" }}
+                  onFocus={e=>{(e.target as HTMLInputElement).style.borderColor='#2563eb';(e.target as HTMLInputElement).style.background='#eff6ff';(e.target as HTMLInputElement).style.boxShadow='0 0 0 3px rgba(37,99,235,0.1)';}}
+                  onBlur={e=>{(e.target as HTMLInputElement).style.borderColor='#e2e8f0';(e.target as HTMLInputElement).style.background='#f8fafc';(e.target as HTMLInputElement).style.boxShadow='none';}} />
               </div>
-
-              <div className="form-group">
-                <label className="form-label">Password</label>
-                <div style={{ position:'relative' }}>
-                  <span style={{ position:'absolute', left:14, top:'50%', transform:'translateY(-50%)', color:'#4a5f82' }}>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
-                  </span>
-                  <input className="form-input" type={showPw?'text':'password'} placeholder="••••••••" value={password} onChange={e=>setPassword(e.target.value)} style={{ paddingLeft:42, paddingRight:42 }} required />
-                  <button type="button" onClick={()=>setShowPw(!showPw)} style={{ position:'absolute', right:14, top:'50%', transform:'translateY(-50%)', background:'none', border:'none', color:'#4a5f82', cursor:'pointer', padding:0 }}>
-                    {showPw
-                      ? <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
-                      : <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-                    }
-                  </button>
-                </div>
-              </div>
-
-              <button type="submit" className="btn-primary" disabled={loading} style={{ width:'100%', justifyContent:'center', padding:'13px', fontSize:'15px', marginTop:8 }}>
-                {loading ? (
-                  <><span style={{ width:18, height:18, border:'2px solid rgba(255,255,255,0.3)', borderTopColor:'#fff', borderRadius:'50%', animation:'spin 0.8s linear infinite', display:'inline-block' }} /> Signing in...</>
-                ) : (
-                  <><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4M10 17l5-5-5-5M15 12H3"/></svg> Sign In</>
-                )}
-              </button>
             </div>
+
+            <div style={{ marginBottom:28 }}>
+              <label style={{ display:'block', fontSize:11, fontWeight:700, color:'#64748b', textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:8 }}>PASSWORD</label>
+              <div style={{ position:'relative' }}>
+                <div style={{ position:'absolute', left:14, top:'50%', transform:'translateY(-50%)', color:'#94a3b8' }}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+                </div>
+                <input type={showPw ? 'text' : 'password'} value={password} onChange={e => setPassword(e.target.value)} required placeholder="••••••••"
+                  style={{ width:'100%', background:'#f8fafc', border:'2px solid #e2e8f0', borderRadius:10, padding:'12px 44px 12px 44px', fontSize:14, color:'#0f172a', outline:'none', transition:'all 0.2s', fontFamily:"'Inter',sans-serif" }}
+                  onFocus={e=>{(e.target as HTMLInputElement).style.borderColor='#2563eb';(e.target as HTMLInputElement).style.background='#eff6ff';(e.target as HTMLInputElement).style.boxShadow='0 0 0 3px rgba(37,99,235,0.1)';}}
+                  onBlur={e=>{(e.target as HTMLInputElement).style.borderColor='#e2e8f0';(e.target as HTMLInputElement).style.background='#f8fafc';(e.target as HTMLInputElement).style.boxShadow='none';}} />
+                <button type="button" onClick={() => setShowPw(!showPw)} style={{ position:'absolute', right:14, top:'50%', transform:'translateY(-50%)', background:'none', border:'none', cursor:'pointer', color:'#94a3b8', padding:0 }}>
+                  {showPw ? '🙈' : '👁️'}
+                </button>
+              </div>
+            </div>
+
+            <button type="submit" disabled={loading} className="btn-primary" style={{ width:'100%', justifyContent:'center', padding:'13px', fontSize:15, borderRadius:12 }}>
+              {loading ? (
+                <><span style={{ width:18,height:18,border:'2px solid rgba(255,255,255,0.4)',borderTopColor:'#fff',borderRadius:'50%',animation:'spin 0.8s linear infinite',display:'inline-block' }} /> Signing in…</>
+              ) : '→ Sign In'}
+            </button>
           </form>
         </div>
 
-        <p style={{ textAlign:'center', color:'#4a5f82', fontSize:12, marginTop:24 }}>
-          SchoolFinance Pro © {new Date().getFullYear()} — Kenya Secondary Schools
-        </p>
+        <div style={{ textAlign:'center', marginTop:24, fontSize:12, color:'#94a3b8' }}>
+          SchoolFinance Pro © 2026 — Kenya Secondary Schools
+        </div>
       </div>
-      <style>{`@keyframes spin{to{transform:rotate(360deg)}}@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-20px)}}`}</style>
+      <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
     </div>
   );
 }

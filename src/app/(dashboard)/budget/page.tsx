@@ -77,7 +77,7 @@ export default function BudgetPage() {
   const varColor = (orig: number, adj: number, actual: number) => {
     const revised = orig + adj;
     const diff = actual - revised;
-    return diff >= 0 ? '#10b981' : '#ef4444';
+    return diff >= 0 ? '#059669' : '#dc2626';
   };
 
   const totIncOrig   = income.reduce((s,r)=>s+r.original_budget,0);
@@ -91,37 +91,40 @@ export default function BudgetPage() {
 
   const utilPct = (actual:number, budget:number) => budget === 0 ? 0 : Math.min(100, Math.round((actual/budget)*100));
 
+  const inputStyle = {background:'#eff6ff', border:'2px solid #93c5fd', borderRadius:8, color:'#0f172a', padding:'6px 10px', width:'100%'};
+  const tdContainerStyle = {padding:'8px', border:'2px dotted #93c5fd', borderRadius:8};
+
   const SectionRows = ({ items, label, color }: { items: BRow[], label: string, color: string }) => (
     <>
-      <tr className="row-section"><td colSpan={7} style={{ color, fontWeight:700 }}>{label}</td></tr>
+      <tr style={{background:'#eef2ff', color:'#7c3aed'}}><td colSpan={7} style={{ color, fontWeight:700, padding:'8px 16px' }}>{label}</td></tr>
       {items.map((row) => {
         const idx = rows.indexOf(row);
         const revised = row.original_budget + row.adjustments;
         const variance = row.actual - revised;
         const pct = utilPct(row.actual, revised);
         return (
-          <tr key={row.vote_head}>
-            <td style={{ paddingLeft:20, color:'#e8edf8' }}>{row.description}</td>
-            <td style={{ textAlign:'right' }}>
-              <input className="cell-input" type="number" step="0.01" value={row.original_budget||''} placeholder="0.00"
+          <tr key={row.vote_head} style={{transition:'background 0.2s'}} onMouseEnter={(e) => e.currentTarget.style.background = '#f5f8ff'} onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}>
+            <td style={{ paddingLeft:20, color:'#0f172a', padding:'12px 16px' }}>{row.description}</td>
+            <td style={{...tdContainerStyle, width:140}}>
+              <input style={inputStyle} type="number" step="0.01" value={row.original_budget||''} placeholder="0.00"
                 onChange={e => upd(idx,'original_budget',e.target.value)} />
             </td>
-            <td style={{ textAlign:'right' }}>
-              <input className="cell-input" type="number" step="0.01" value={row.adjustments||''} placeholder="0.00"
+            <td style={{...tdContainerStyle, width:140}}>
+              <input style={inputStyle} type="number" step="0.01" value={row.adjustments||''} placeholder="0.00"
                 onChange={e => upd(idx,'adjustments',e.target.value)} />
             </td>
-            <td style={{ textAlign:'right', color:'#4f7ef8', fontWeight:600 }}>{fmt(revised)}</td>
-            <td style={{ textAlign:'right' }}>
-              <input className="cell-input" type="number" step="0.01" value={row.actual||''} placeholder="0.00"
+            <td style={{ textAlign:'right', color:'#2563eb', fontWeight:600, padding:'12px 16px' }}>{fmt(revised)}</td>
+            <td style={{...tdContainerStyle, width:140}}>
+              <input style={inputStyle} type="number" step="0.01" value={row.actual||''} placeholder="0.00"
                 onChange={e => upd(idx,'actual',e.target.value)} />
             </td>
-            <td style={{ textAlign:'right', color:variance>=0?'#10b981':'#ef4444', fontWeight:600 }}>{fmt(variance)}</td>
-            <td style={{ width:120 }}>
+            <td style={{ textAlign:'right', color:variance>=0?'#059669':'#dc2626', fontWeight:600, padding:'12px 16px' }}>{fmt(variance)}</td>
+            <td style={{ width:120, padding:'12px 16px' }}>
               <div style={{ display:'flex', alignItems:'center', gap:6 }}>
-                <div className="progress-bar" style={{ flex:1 }}>
-                  <div className="progress-fill" style={{ width:`${pct}%`, background: pct>100?'#ef4444':pct>80?'#f59e0b':'#10b981' }} />
+                <div className="progress-bar" style={{ flex:1, height:6, background:'#e2e8f0', borderRadius:3, overflow:'hidden' }}>
+                  <div className="progress-fill" style={{ height:'100%', width:`${pct}%`, background: pct>100?'#dc2626':pct>80?'#f59e0b':'#059669', borderRadius:3 }} />
                 </div>
-                <span style={{ fontSize:11, color:'#7a90b8', minWidth:32 }}>{pct}%</span>
+                <span style={{ fontSize:11, color:'#475569', minWidth:32 }}>{pct}%</span>
               </div>
             </td>
           </tr>
@@ -131,13 +134,18 @@ export default function BudgetPage() {
   );
 
   return (
-    <div className="page-body">
+    <div className="page-body" style={{background:'#f0f5ff', minHeight:'100vh', padding:24}}>
       <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:24 }}>
         <div>
-          <h1 style={{ fontSize:22, fontWeight:800, color:'#e8edf8' }}>🎯 Budget Analysis</h1>
-          <p style={{ color:'#7a90b8', fontSize:13, marginTop:4 }}>Budget vs Actual Performance — FY {yearLabel}</p>
+          <h1 style={{ fontSize:22, fontWeight:800, color:'#0f172a' }}>🎯 Budget Analysis</h1>
+          <p style={{ color:'#475569', fontSize:13, marginTop:4 }}>Budget vs Actual Performance — FY {yearLabel}</p>
         </div>
         <button className="btn-success" onClick={save} disabled={saving}>{saving?'Saving…':'💾 Save All'}</button>
+      </div>
+
+      <div style={{background:'#eff6ff', border:'1px solid #93c5fd', borderRadius:8, padding:'12px 16px', marginBottom:24, color:'#0f172a', display:'flex', alignItems:'center', gap:8}}>
+        <span style={{fontSize:20}}>💡</span>
+        <span><strong>How to use:</strong> Click on any white input cell in the Amount columns to enter your figures. Press Tab to move to next field. Click Save when done.</span>
       </div>
 
       {/* KPIs */}
@@ -149,7 +157,7 @@ export default function BudgetPage() {
         </div>
         <div className="kpi-card green">
           <div className="kpi-label">Actual Surplus</div>
-          <div className="kpi-value" style={{ fontSize:17, color:netActual>=0?'#10b981':'#ef4444' }}>KES {fmt(netActual)}</div>
+          <div className="kpi-value" style={{ fontSize:17, color:netActual>=0?'#059669':'#dc2626' }}>KES {fmt(netActual)}</div>
           <div className="kpi-sub">Income - Expenditure</div>
         </div>
         <div className="kpi-card purple">
@@ -164,53 +172,50 @@ export default function BudgetPage() {
         </div>
       </div>
 
-      <div style={{ background:'#0d1526', border:'1px solid #1e2d4a', borderRadius:16, overflow:'hidden' }}>
+      <div style={{ background:'#fff', border:'1px solid #dde6f5', borderRadius:16, overflow:'hidden' }}>
         <div style={{ overflowX:'auto' }}>
-          <table className="data-grid">
+          <table className="data-grid" style={{width:'100%', borderCollapse:'collapse'}}>
             <thead>
-              <tr>
-                <th>Description</th>
-                <th style={{ width:160, textAlign:'right' }}>Original Budget</th>
-                <th style={{ width:160, textAlign:'right' }}>Adjustments</th>
-                <th style={{ width:160, textAlign:'right' }}>Revised Budget</th>
-                <th style={{ width:160, textAlign:'right' }}>Actual</th>
-                <th style={{ width:140, textAlign:'right' }}>Variance</th>
-                <th style={{ width:140 }}>Utilisation</th>
+              <tr style={{background:'#f1f5fd', color:'#475569', textAlign:'left'}}>
+                <th style={{padding:'12px 16px'}}>Description</th>
+                <th style={{ width:140, textAlign:'right', padding:'12px 16px', color:'#0f172a', fontWeight:700 }}>Original Budget ✏️</th>
+                <th style={{ width:140, textAlign:'right', padding:'12px 16px', color:'#0f172a', fontWeight:700 }}>Adjustments ✏️</th>
+                <th style={{ width:140, textAlign:'right', padding:'12px 16px' }}>Revised Budget</th>
+                <th style={{ width:140, textAlign:'right', padding:'12px 16px', color:'#0f172a', fontWeight:700 }}>Actual ✏️</th>
+                <th style={{ width:120, textAlign:'right', padding:'12px 16px' }}>Variance</th>
+                <th style={{ width:120, padding:'12px 16px' }}>Utilisation</th>
               </tr>
             </thead>
             <tbody>
-              <SectionRows items={income}  label="📥 INCOME"      color="#10b981" />
-              <tr className="row-total">
-                <td style={{ fontWeight:800 }}>Total Income</td>
-                <td style={{ textAlign:'right', color:'#7a90b8' }}>{fmt(totIncOrig)}</td>
-                <td style={{ textAlign:'right', color:'#7a90b8' }}>{fmt(totIncAdj)}</td>
-                <td style={{ textAlign:'right', color:'#4f7ef8', fontWeight:800 }}>{fmt(totIncOrig+totIncAdj)}</td>
-                <td style={{ textAlign:'right', color:'#10b981', fontWeight:800 }}>{fmt(totIncAct)}</td>
-                <td style={{ textAlign:'right', color:totIncAct-(totIncOrig+totIncAdj)>=0?'#10b981':'#ef4444', fontWeight:800 }}>{fmt(totIncAct-(totIncOrig+totIncAdj))}</td>
-                <td></td>
+              <SectionRows items={income}  label="📥 INCOME"      color="#059669" />
+              <tr style={{background:'#f0f5ff'}}>
+                <td style={{ fontWeight:800, color:'#0f172a', padding:'12px 16px' }}>Total Income</td>
+                <td style={{ textAlign:'right', color:'#475569', padding:'12px 16px' }}>{fmt(totIncOrig)}</td>
+                <td style={{ textAlign:'right', color:'#475569', padding:'12px 16px' }}>{fmt(totIncAdj)}</td>
+                <td style={{ textAlign:'right', color:'#2563eb', fontWeight:800, padding:'12px 16px' }}>{fmt(totIncOrig+totIncAdj)}</td>
+                <td style={{ textAlign:'right', color:'#059669', fontWeight:800, padding:'12px 16px' }}>{fmt(totIncAct)}</td>
+                <td style={{ textAlign:'right', color:totIncAct-(totIncOrig+totIncAdj)>=0?'#059669':'#dc2626', fontWeight:800, padding:'12px 16px' }}>{fmt(totIncAct-(totIncOrig+totIncAdj))}</td>
+                <td style={{padding:'12px 16px'}}></td>
               </tr>
 
-              <tr style={{ height:12 }}><td colSpan={7}></td></tr>
-
-              <SectionRows items={expense} label="📤 EXPENDITURE" color="#ef4444" />
-              <tr className="row-total">
-                <td style={{ fontWeight:800 }}>Total Expenditure</td>
-                <td style={{ textAlign:'right', color:'#7a90b8' }}>{fmt(totExpOrig)}</td>
-                <td style={{ textAlign:'right', color:'#7a90b8' }}>{fmt(totExpAdj)}</td>
-                <td style={{ textAlign:'right', color:'#4f7ef8', fontWeight:800 }}>{fmt(totExpOrig+totExpAdj)}</td>
-                <td style={{ textAlign:'right', color:'#ef4444', fontWeight:800 }}>{fmt(totExpAct)}</td>
-                <td style={{ textAlign:'right', color:totExpAct-(totExpOrig+totExpAdj)<=0?'#10b981':'#ef4444', fontWeight:800 }}>{fmt(totExpAct-(totExpOrig+totExpAdj))}</td>
-                <td></td>
+              <SectionRows items={expense} label="📤 EXPENDITURE" color="#dc2626" />
+              <tr style={{background:'#f0f5ff'}}>
+                <td style={{ fontWeight:800, color:'#0f172a', padding:'12px 16px' }}>Total Expenditure</td>
+                <td style={{ textAlign:'right', color:'#475569', padding:'12px 16px' }}>{fmt(totExpOrig)}</td>
+                <td style={{ textAlign:'right', color:'#475569', padding:'12px 16px' }}>{fmt(totExpAdj)}</td>
+                <td style={{ textAlign:'right', color:'#2563eb', fontWeight:800, padding:'12px 16px' }}>{fmt(totExpOrig+totExpAdj)}</td>
+                <td style={{ textAlign:'right', color:'#dc2626', fontWeight:800, padding:'12px 16px' }}>{fmt(totExpAct)}</td>
+                <td style={{ textAlign:'right', color:totExpAct-(totExpOrig+totExpAdj)<=0?'#059669':'#dc2626', fontWeight:800, padding:'12px 16px' }}>{fmt(totExpAct-(totExpOrig+totExpAdj))}</td>
+                <td style={{padding:'12px 16px'}}></td>
               </tr>
 
-              <tr style={{ height:12 }}><td colSpan={7}></td></tr>
-              <tr style={{ background:'linear-gradient(135deg,rgba(79,126,248,0.12),rgba(139,92,246,0.08))' }}>
-                <td style={{ fontWeight:800, fontSize:14 }}>NET SURPLUS / (DEFICIT)</td>
-                <td></td><td></td>
-                <td style={{ textAlign:'right', color:'#4f7ef8', fontWeight:800, fontSize:15 }}>{fmt(netOriginal)}</td>
-                <td style={{ textAlign:'right', color:netActual>=0?'#10b981':'#ef4444', fontWeight:800, fontSize:15 }}>{fmt(netActual)}</td>
-                <td style={{ textAlign:'right', color:netActual-netOriginal>=0?'#10b981':'#ef4444', fontWeight:800 }}>{fmt(netActual-netOriginal)}</td>
-                <td></td>
+              <tr style={{ background:'linear-gradient(135deg,rgba(37,99,235,0.08),rgba(124,58,237,0.05))' }}>
+                <td style={{ fontWeight:800, fontSize:14, color:'#0f172a', padding:'16px' }}>NET SURPLUS / (DEFICIT)</td>
+                <td style={{padding:'16px'}}></td><td style={{padding:'16px'}}></td>
+                <td style={{ textAlign:'right', color:'#2563eb', fontWeight:800, fontSize:15, padding:'16px' }}>{fmt(netOriginal)}</td>
+                <td style={{ textAlign:'right', color:netActual>=0?'#059669':'#dc2626', fontWeight:800, fontSize:15, padding:'16px' }}>{fmt(netActual)}</td>
+                <td style={{ textAlign:'right', color:netActual-netOriginal>=0?'#059669':'#dc2626', fontWeight:800, padding:'16px' }}>{fmt(netActual-netOriginal)}</td>
+                <td style={{padding:'16px'}}></td>
               </tr>
             </tbody>
           </table>

@@ -77,10 +77,65 @@ export default function NotesGrantsPage() {
   const fmt = (n:number) => n===0?'-': n<0?`(${Math.abs(n).toLocaleString('en-KE',{minimumFractionDigits:2})})`:n.toLocaleString('en-KE',{minimumFractionDigits:2});
 
   return (
-    <div className="page-body">
+    <div className="page-body" style={{ background: '#f0f5ff', minHeight: '100vh' }}>
+      <style>{`
+        .light-table {
+          width: 100%;
+          border-collapse: collapse;
+        }
+        .light-table th {
+          background: #f1f5fd;
+          color: #475569;
+          font-weight: 700;
+          padding: 12px;
+          border-bottom: 1px solid #dde6f5;
+          text-align: left;
+        }
+        .light-table td {
+          padding: 12px;
+          border-bottom: 1px solid #dde6f5;
+          color: #0f172a;
+        }
+        .light-table tr {
+          background: #fff;
+          transition: background 0.2s;
+        }
+        .light-table tr:hover {
+          background: #f5f8ff;
+        }
+        .light-table .row-total td {
+          background: #f0f5ff;
+          font-weight: 800;
+        }
+        .cell-input-light {
+          background: #eff6ff;
+          border: 2px solid #93c5fd;
+          border-radius: 8px;
+          color: #0f172a;
+          padding: 7px 10px;
+          width: 100%;
+          box-sizing: border-box;
+          outline: none;
+          text-align: right;
+          font-family: inherit;
+        }
+        .cell-input-light:focus {
+          background: rgba(37,99,235,0.08);
+          border-color: #2563eb;
+        }
+      `}</style>
+
+      <div style={{ background:'#eff6ff', border:'1px solid #93c5fd', borderRadius:12, padding:'14px 18px', marginBottom:20, display:'flex', gap:12, alignItems:'flex-start' }}>
+        <span style={{ fontSize:20 }}>✏️</span>
+        <div>
+          <div style={{ fontWeight:700, fontSize:13, color:'#2563eb', marginBottom:3 }}>How to Enter Data</div>
+          <div style={{ fontSize:12, color:'#475569', lineHeight:1.6 }}>Click on any cell in the 'Current Year' or 'Previous Year' columns to enter your figures. The system automatically calculates totals. Click 'Save' when finished entering data.</div>
+        </div>
+      </div>
+
       <div style={{ marginBottom:24 }}>
-        <h1 style={{ fontSize:22, fontWeight:800, color:'#e8edf8' }}>📋 Notes 1–5: Grants & Income</h1>
-        <p style={{ color:'#7a90b8', fontSize:13, marginTop:4 }}>Detailed breakdown of grants and income sources — FY {yearLabel}</p>
+        <h1 style={{ fontSize:22, fontWeight:800, color:'#0f172a' }}>📋 Notes 1–5: Grants & Income</h1>
+        <p style={{ color:'#475569', fontSize:13, marginTop:4 }}>Detailed breakdown of grants and income sources — FY {yearLabel}</p>
       </div>
 
       {NOTE_DEFS.map(def => {
@@ -88,42 +143,46 @@ export default function NotesGrantsPage() {
         const totalCur  = rows.reduce((s,r) => s+r.current_amount, 0);
         const totalPrev = rows.reduce((s,r) => s+r.previous_amount, 0);
         return (
-          <div key={def.num} style={{ marginBottom:24, background:'#0d1526', border:'1px solid #1e2d4a', borderRadius:16, overflow:'hidden' }}>
-            <div style={{ padding:'14px 20px', background:'linear-gradient(135deg,#111d35,#0d1526)', borderBottom:'1px solid #1e2d4a', display:'flex', justifyContent:'space-between', alignItems:'center' }}>
+          <div key={def.num} style={{ marginBottom:24, background:'#fff', border:'1px solid #dde6f5', borderRadius:16, overflow:'hidden' }}>
+            <div style={{ padding:'14px 20px', background:'#f1f5fd', borderBottom:'1px solid #dde6f5', display:'flex', justifyContent:'space-between', alignItems:'center' }}>
               <div>
-                <span style={{ fontSize:13, fontWeight:700, color:'#e8edf8' }}>{def.title}</span>
+                <span style={{ fontSize:13, fontWeight:700, color:'#475569' }}>{def.title}</span>
                 <span className="badge badge-blue" style={{ marginLeft:10 }}>Note {def.num}</span>
               </div>
               <button className="btn-success" style={{ padding:'6px 16px', fontSize:12 }} onClick={() => saveNote(def.num)} disabled={saving===def.num}>
                 {saving===def.num ? 'Saving…' : '💾 Save'}
               </button>
             </div>
-            <table className="data-grid">
+            <table className="light-table">
               <thead>
                 <tr>
                   <th>Description</th>
-                  <th style={{ width:180, textAlign:'right' }}>Current Year (KES)</th>
-                  <th style={{ width:180, textAlign:'right' }}>Previous Year (KES)</th>
+                  <th style={{ width:200, textAlign:'right' }}>✏️ Enter Amount<br/><span style={{fontSize:11,fontWeight:normal}}>Current Year (KES)</span></th>
+                  <th style={{ width:200, textAlign:'right' }}>✏️ Enter Amount<br/><span style={{fontSize:11,fontWeight:normal}}>Previous Year (KES)</span></th>
                 </tr>
               </thead>
               <tbody>
                 {rows.map((row, i) => (
                   <tr key={row.row_label}>
-                    <td style={{ paddingLeft:20, color:'#e8edf8' }}>{row.row_label}</td>
-                    <td style={{ textAlign:'right' }}>
-                      <input className="cell-input" type="number" step="0.01" value={row.current_amount||''} placeholder="0.00"
-                        onChange={e => upd(def.num, i, 'current_amount', e.target.value)} />
+                    <td style={{ paddingLeft:20, color:'#0f172a' }}>{row.row_label}</td>
+                    <td style={{ textAlign:'right', padding:'8px' }}>
+                      <div style={{ padding:'2px', border:'1px dotted #93c5fd', borderRadius:10 }}>
+                        <input className="cell-input-light" type="number" step="0.01" value={row.current_amount||''} placeholder="0.00"
+                          onChange={e => upd(def.num, i, 'current_amount', e.target.value)} />
+                      </div>
                     </td>
-                    <td style={{ textAlign:'right' }}>
-                      <input className="cell-input" type="number" step="0.01" value={row.previous_amount||''} placeholder="0.00"
-                        onChange={e => upd(def.num, i, 'previous_amount', e.target.value)} />
+                    <td style={{ textAlign:'right', padding:'8px' }}>
+                      <div style={{ padding:'2px', border:'1px dotted #93c5fd', borderRadius:10 }}>
+                        <input className="cell-input-light" type="number" step="0.01" value={row.previous_amount||''} placeholder="0.00"
+                          onChange={e => upd(def.num, i, 'previous_amount', e.target.value)} />
+                      </div>
                     </td>
                   </tr>
                 ))}
                 <tr className="row-total">
                   <td style={{ fontWeight:800 }}>Total – Note {def.num}</td>
-                  <td style={{ textAlign:'right', color:'#10b981', fontWeight:800 }}>{fmt(totalCur)}</td>
-                  <td style={{ textAlign:'right', color:'#7a90b8', fontWeight:700 }}>{fmt(totalPrev)}</td>
+                  <td style={{ textAlign:'right', color:'#059669', fontWeight:800 }}>{fmt(totalCur)}</td>
+                  <td style={{ textAlign:'right', color:'#475569', fontWeight:700 }}>{fmt(totalPrev)}</td>
                 </tr>
               </tbody>
             </table>

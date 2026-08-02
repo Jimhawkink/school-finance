@@ -109,49 +109,95 @@ export default function NotesOtherPage() {
   }));
 
   const sectionColors: Record<string,string> = {
-    'A. Commitments':                 '#4f7ef8',
-    'B. Contingent Liabilities':      '#ef4444',
+    'A. Commitments':                 '#2563eb',
+    'B. Contingent Liabilities':      '#dc2626',
     'C. Related Party Transactions':  '#f59e0b',
-    'D. Events After Reporting Date': '#8b5cf6',
-    'E. Comparative Figures':         '#10b981',
+    'D. Events After Reporting Date': '#7c3aed',
+    'E. Comparative Figures':         '#059669',
   };
 
   return (
-    <div className="page-body">
+    <div className="page-body" style={{ background: '#f0f5ff', minHeight: '100vh' }}>
+      <style>{`
+        @keyframes spin{to{transform:rotate(360deg)}}
+        .light-table {
+          width: 100%;
+          border-collapse: collapse;
+        }
+        .light-table th {
+          background: #f1f5fd;
+          color: #475569;
+          font-weight: 700;
+          padding: 12px;
+          border-bottom: 1px solid #dde6f5;
+          text-align: left;
+        }
+        .light-table td {
+          padding: 12px;
+          border-bottom: 1px solid #dde6f5;
+          color: #0f172a;
+        }
+        .light-table tr {
+          background: #fff;
+          transition: background 0.2s;
+        }
+        .light-table tr:hover {
+          background: #f5f8ff;
+        }
+        .light-table .row-total td {
+          background: #f0f5ff;
+          font-weight: 800;
+        }
+        .cell-input-light {
+          background: #eff6ff;
+          border: 2px solid #93c5fd;
+          border-radius: 8px;
+          color: #0f172a;
+          padding: 7px 10px;
+          width: 100%;
+          box-sizing: border-box;
+          outline: none;
+          text-align: right;
+          font-family: inherit;
+        }
+        .cell-input-light:focus {
+          background: rgba(37,99,235,0.08);
+          border-color: #2563eb;
+        }
+      `}</style>
+
+      {/* Info Banner */}
+      <div style={{ background:'#eff6ff', border:'1px solid #93c5fd', borderRadius:12, padding:'14px 18px', marginBottom:20, display:'flex', gap:12, alignItems:'flex-start' }}>
+        <span style={{ fontSize:20 }}>✏️</span>
+        <div>
+          <div style={{ fontWeight:700, fontSize:13, color:'#2563eb', marginBottom:3 }}>How to Enter Data</div>
+          <div style={{ fontSize:12, color:'#475569', lineHeight:1.6 }}>Click on any cell in the 'Current Year' or 'Previous Year' columns to enter your figures. The system automatically calculates totals. Click 'Save' when finished entering data.</div>
+        </div>
+      </div>
+
       {/* Header */}
       <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:28 }}>
         <div>
-          <h1 style={{ fontSize:24, fontWeight:900, color:'#e8edf8', letterSpacing:'-0.3px' }}>📋 Note 17 – Other Disclosures</h1>
-          <p style={{ color:'#7a90b8', fontSize:13, marginTop:4 }}>Commitments, contingencies, related parties & events after reporting date — FY {yearLabel}</p>
+          <h1 style={{ fontSize:24, fontWeight:900, color:'#0f172a', letterSpacing:'-0.3px' }}>📋 Note 17 – Other Disclosures</h1>
+          <p style={{ color:'#475569', fontSize:13, marginTop:4 }}>Commitments, contingencies, related parties & events after reporting date — FY {yearLabel}</p>
         </div>
         <button className="btn-success" onClick={save} disabled={saving} style={{ padding:'11px 28px', fontSize:14 }}>
           {saving ? (
-            <><span style={{ width:16,height:16,border:'2px solid rgba(255,255,255,0.3)',borderTopColor:'#fff',borderRadius:'50%',animation:'spin 0.8s linear infinite',display:'inline-block' }} /> Saving…</>
+            <><span style={{ width:16,height:16,border:'2px solid rgba(255,255,255,0.8)',borderTopColor:'transparent',borderRadius:'50%',animation:'spin 0.8s linear infinite',display:'inline-block' }} /> Saving…</>
           ) : '💾 Save Note 17'}
         </button>
-      </div>
-
-      {/* Info Banner */}
-      <div style={{ background:'linear-gradient(135deg,rgba(79,126,248,0.08),rgba(139,92,246,0.05))', border:'1px solid rgba(79,126,248,0.2)', borderRadius:12, padding:'16px 20px', marginBottom:24, display:'flex', gap:12, alignItems:'flex-start' }}>
-        <span style={{ fontSize:22 }}>ℹ️</span>
-        <div>
-          <div style={{ fontWeight:700, fontSize:13, color:'#4f7ef8', marginBottom:4 }}>About Note 17</div>
-          <div style={{ fontSize:12, color:'#7a90b8', lineHeight:1.6 }}>
-            Note 17 covers all other disclosures required by the Public Finance Management Act and relevant accounting standards. Enter monetary values where applicable; for qualitative disclosures, use the narrative section at the bottom.
-          </div>
-        </div>
       </div>
 
       {/* Summary KPIs */}
       <div style={{ display:'grid', gridTemplateColumns:'repeat(5,1fr)', gap:14, marginBottom:24 }}>
         {sections.map(sec => {
           const tot = sec.rows.reduce((s,r)=>s+r.current_amount,0);
-          const col = sectionColors[sec.heading]||'#7a90b8';
+          const col = sectionColors[sec.heading]||'#475569';
           return (
-            <div key={sec.heading} style={{ background:'#0d1526', border:`1px solid ${col}30`, borderRadius:14, padding:'16px 16px', position:'relative', overflow:'hidden' }}>
+            <div key={sec.heading} style={{ background:'#fff', border:`1px solid ${col}40`, borderRadius:14, padding:'16px 16px', position:'relative', overflow:'hidden' }}>
               <div style={{ position:'absolute', top:0,left:0,right:0,height:3,background:`linear-gradient(90deg,${col},${col}88)` }} />
               <div style={{ fontSize:10, fontWeight:700, color:col, textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:6 }}>{sec.heading.split('.')[1]?.trim().split(' ').slice(0,2).join(' ')}</div>
-              <div style={{ fontSize:17, fontWeight:800, color:tot>0?col:'#4a5f82' }}>{tot>0?`KES ${(tot/1000).toFixed(0)}K`:'None'}</div>
+              <div style={{ fontSize:17, fontWeight:800, color:tot>0?col:'#94a3b8' }}>{tot>0?`KES ${(tot/1000).toFixed(0)}K`:'None'}</div>
             </div>
           );
         })}
@@ -159,19 +205,19 @@ export default function NotesOtherPage() {
 
       {/* Sections */}
       {sections.map(sec => {
-        const col = sectionColors[sec.heading] || '#7a90b8';
+        const col = sectionColors[sec.heading] || '#475569';
         const secTotal = sec.rows.reduce((s,r)=>s+r.current_amount,0);
         const secPrev  = sec.rows.reduce((s,r)=>s+r.previous_amount,0);
         return (
-          <div key={sec.heading} style={{ marginBottom:20, background:'#0d1526', border:'1px solid #1e2d4a', borderRadius:16, overflow:'hidden' }}>
+          <div key={sec.heading} style={{ marginBottom:20, background:'#fff', border:'1px solid #dde6f5', borderRadius:16, overflow:'hidden' }}>
             {/* Section header */}
-            <div style={{ padding:'14px 22px', background:`linear-gradient(135deg,rgba(${col==='#4f7ef8'?'79,126,248':col==='#ef4444'?'239,68,68':col==='#f59e0b'?'245,158,11':col==='#8b5cf6'?'139,92,246':'16,185,129'},0.12),rgba(255,255,255,0.02))`, borderBottom:'1px solid rgba(255,255,255,0.06)', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+            <div style={{ padding:'14px 22px', background:'#eef2ff', borderBottom:'1px solid #dde6f5', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
               <div style={{ display:'flex', alignItems:'center', gap:12 }}>
-                <div style={{ width:32, height:32, background:`${col}25`, border:`1px solid ${col}40`, borderRadius:8, display:'flex', alignItems:'center', justifyContent:'center', fontSize:14, fontWeight:800, color:col }}>
+                <div style={{ width:32, height:32, background:`${col}15`, border:`1px solid ${col}40`, borderRadius:8, display:'flex', alignItems:'center', justifyContent:'center', fontSize:14, fontWeight:800, color:col }}>
                   {sec.heading.charAt(0)}
                 </div>
                 <div>
-                  <div style={{ fontSize:14, fontWeight:700, color:'#e8edf8' }}>{sec.heading}</div>
+                  <div style={{ fontSize:14, fontWeight:700, color:'#0f172a' }}>{sec.heading}</div>
                 </div>
               </div>
               {secTotal > 0 && (
@@ -180,12 +226,12 @@ export default function NotesOtherPage() {
             </div>
 
             <div style={{ overflowX:'auto' }}>
-              <table className="data-grid">
+              <table className="light-table">
                 <thead>
                   <tr>
                     <th>Description</th>
-                    <th style={{ width:200, textAlign:'right' }}>Current Year (KES)</th>
-                    <th style={{ width:200, textAlign:'right' }}>Previous Year (KES)</th>
+                    <th style={{ width:220, textAlign:'right' }}>✏️ Enter Amount<br/><span style={{fontSize:11,fontWeight:'normal'}}>Current Year (KES)</span></th>
+                    <th style={{ width:220, textAlign:'right' }}>✏️ Enter Amount<br/><span style={{fontSize:11,fontWeight:'normal'}}>Previous Year (KES)</span></th>
                     <th style={{ width:180, textAlign:'right' }}>Formatted Current</th>
                   </tr>
                 </thead>
@@ -194,16 +240,20 @@ export default function NotesOtherPage() {
                     const globalIdx = rows.indexOf(row);
                     return (
                       <tr key={row.row_label}>
-                        <td style={{ paddingLeft:22, color:'#e8edf8' }}>{row.row_label}</td>
-                        <td style={{ textAlign:'right' }}>
-                          <input className="cell-input" type="number" step="0.01" value={row.current_amount||''} placeholder="0.00"
-                            onChange={e => upd(globalIdx,'current_amount',e.target.value)} />
+                        <td style={{ paddingLeft:22, color:'#0f172a' }}>{row.row_label}</td>
+                        <td style={{ textAlign:'right', padding:'8px' }}>
+                          <div style={{ padding:'2px', border:'1px dotted #93c5fd', borderRadius:10 }}>
+                            <input className="cell-input-light" type="number" step="0.01" value={row.current_amount||''} placeholder="0.00"
+                              onChange={e => upd(globalIdx,'current_amount',e.target.value)} />
+                          </div>
                         </td>
-                        <td style={{ textAlign:'right' }}>
-                          <input className="cell-input" type="number" step="0.01" value={row.previous_amount||''} placeholder="0.00"
-                            onChange={e => upd(globalIdx,'previous_amount',e.target.value)} />
+                        <td style={{ textAlign:'right', padding:'8px' }}>
+                          <div style={{ padding:'2px', border:'1px dotted #93c5fd', borderRadius:10 }}>
+                            <input className="cell-input-light" type="number" step="0.01" value={row.previous_amount||''} placeholder="0.00"
+                              onChange={e => upd(globalIdx,'previous_amount',e.target.value)} />
+                          </div>
                         </td>
-                        <td style={{ textAlign:'right', color:row.current_amount>0?col:'#4a5f82', fontWeight:row.current_amount>0?700:400 }}>
+                        <td style={{ textAlign:'right', color:row.current_amount>0?col:'#94a3b8', fontWeight:row.current_amount>0?700:400 }}>
                           {fmt(row.current_amount)}
                         </td>
                       </tr>
@@ -226,43 +276,41 @@ export default function NotesOtherPage() {
 
       {/* Grand Total */}
       <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:16, marginBottom:24 }}>
-        <div style={{ padding:'20px 24px', background:'linear-gradient(135deg,rgba(79,126,248,0.1),rgba(139,92,246,0.06))', border:'1px solid rgba(79,126,248,0.25)', borderRadius:14 }}>
-          <div style={{ fontSize:11, fontWeight:700, color:'#7a90b8', textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:8 }}>Total Disclosures — Current Year</div>
-          <div style={{ fontSize:24, fontWeight:900, color:totalCur>0?'#4f7ef8':'#4a5f82' }}>{totalCur>0?`KES ${totalCur.toLocaleString('en-KE')}`:'No amounts'}</div>
+        <div style={{ padding:'20px 24px', background:'linear-gradient(135deg,#f8fafc,#ffffff)', border:'1px solid #dde6f5', borderRadius:14 }}>
+          <div style={{ fontSize:11, fontWeight:700, color:'#475569', textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:8 }}>Total Disclosures — Current Year</div>
+          <div style={{ fontSize:24, fontWeight:900, color:totalCur>0?'#2563eb':'#94a3b8' }}>{totalCur>0?`KES ${totalCur.toLocaleString('en-KE')}`:'No amounts'}</div>
         </div>
-        <div style={{ padding:'20px 24px', background:'rgba(255,255,255,0.03)', border:'1px solid #1e2d4a', borderRadius:14 }}>
-          <div style={{ fontSize:11, fontWeight:700, color:'#7a90b8', textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:8 }}>Total Disclosures — Previous Year</div>
-          <div style={{ fontSize:24, fontWeight:900, color:totalPrev>0?'#7a90b8':'#4a5f82' }}>{totalPrev>0?`KES ${totalPrev.toLocaleString('en-KE')}`:'No amounts'}</div>
+        <div style={{ padding:'20px 24px', background:'#fff', border:'1px solid #dde6f5', borderRadius:14 }}>
+          <div style={{ fontSize:11, fontWeight:700, color:'#475569', textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:8 }}>Total Disclosures — Previous Year</div>
+          <div style={{ fontSize:24, fontWeight:900, color:totalPrev>0?'#475569':'#94a3b8' }}>{totalPrev>0?`KES ${totalPrev.toLocaleString('en-KE')}`:'No amounts'}</div>
         </div>
       </div>
 
       {/* Narrative / Qualitative Disclosures */}
-      <div style={{ background:'#0d1526', border:'1px solid #1e2d4a', borderRadius:16, padding:24, marginBottom:24 }}>
+      <div style={{ background:'#fff', border:'1px solid #dde6f5', borderRadius:16, padding:24, marginBottom:24 }}>
         <div style={{ display:'flex', alignItems:'center', gap:10, marginBottom:16 }}>
-          <div style={{ width:32, height:32, background:'linear-gradient(135deg,#a855f7,#7c3aed)', borderRadius:8, display:'flex', alignItems:'center', justifyContent:'center', fontSize:16 }}>✍️</div>
+          <div style={{ width:32, height:32, background:'linear-gradient(135deg,#f0f5ff,#eef2ff)', border:'1px solid #c7d2fe', borderRadius:8, display:'flex', alignItems:'center', justifyContent:'center', fontSize:16 }}>✍️</div>
           <div>
-            <div style={{ fontWeight:700, fontSize:15, color:'#e8edf8' }}>Narrative Disclosures</div>
-            <div style={{ fontSize:12, color:'#7a90b8', marginTop:2 }}>Qualitative notes, explanations, and additional information for the auditor</div>
+            <div style={{ fontWeight:700, fontSize:15, color:'#0f172a' }}>Narrative Disclosures</div>
+            <div style={{ fontSize:12, color:'#475569', marginTop:2 }}>Qualitative notes, explanations, and additional information for the auditor</div>
           </div>
         </div>
         <textarea
           value={narrative}
           onChange={e => setNarrative(e.target.value)}
           placeholder="Enter any qualitative disclosures, accounting policies, explanations of significant changes, details of pending litigation, descriptions of related party transactions, events after the reporting date, etc…"
-          style={{ width:'100%', minHeight:180, background:'rgba(255,255,255,0.03)', border:'1px solid #1e2d4a', borderRadius:10, padding:'14px 16px', color:'#e8edf8', fontSize:13, fontFamily:"'Inter',sans-serif", lineHeight:1.7, resize:'vertical', outline:'none', transition:'border-color 0.2s' }}
-          onFocus={e=>{(e.target as HTMLTextAreaElement).style.borderColor='#4f7ef8';(e.target as HTMLTextAreaElement).style.boxShadow='0 0 0 3px rgba(79,126,248,0.12)';}}
-          onBlur={e=>{(e.target as HTMLTextAreaElement).style.borderColor='#1e2d4a';(e.target as HTMLTextAreaElement).style.boxShadow='none';}}
+          style={{ width:'100%', minHeight:180, background:'#eff6ff', border:'2px solid #93c5fd', borderRadius:10, padding:'14px 16px', color:'#0f172a', fontSize:13, fontFamily:"'Inter',sans-serif", lineHeight:1.7, resize:'vertical', outline:'none', transition:'border-color 0.2s' }}
+          onFocus={e=>{(e.target as HTMLTextAreaElement).style.borderColor='#2563eb';(e.target as HTMLTextAreaElement).style.boxShadow='0 0 0 3px rgba(37,99,235,0.1)';}}
+          onBlur={e=>{(e.target as HTMLTextAreaElement).style.borderColor='#93c5fd';(e.target as HTMLTextAreaElement).style.boxShadow='none';}}
         />
-        <div style={{ fontSize:11, color:'#4a5f82', marginTop:8 }}>{narrative.length} characters · This narrative will appear in the printed report</div>
+        <div style={{ fontSize:11, color:'#94a3b8', marginTop:8 }}>{narrative.length} characters · This narrative will appear in the printed report</div>
       </div>
 
-      <div style={{ display:'flex', justifyContent:'flex-end' }}>
+      <div style={{ display:'flex', justifyContent:'flex-end', marginBottom:40 }}>
         <button className="btn-success" onClick={save} disabled={saving} style={{ padding:'12px 32px', fontSize:14 }}>
           {saving ? 'Saving…' : '💾 Save All of Note 17'}
         </button>
       </div>
-
-      <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
     </div>
   );
 }

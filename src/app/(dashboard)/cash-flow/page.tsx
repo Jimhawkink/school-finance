@@ -34,10 +34,10 @@ const TEMPLATE: CFRow[] = [
 ];
 
 const LABELS: Record<string,{label:string,color:string,emoji:string}> = {
-  operating_receipt: { label:'OPERATING RECEIPTS',  color:'#10b981', emoji:'📥' },
-  operating_payment: { label:'OPERATING PAYMENTS',  color:'#ef4444', emoji:'📤' },
-  investing:         { label:'INVESTING ACTIVITIES', color:'#4f7ef8', emoji:'📈' },
-  financing:         { label:'FINANCING ACTIVITIES', color:'#8b5cf6', emoji:'🏦' },
+  operating_receipt: { label:'OPERATING RECEIPTS',  color:'#059669', emoji:'📥' },
+  operating_payment: { label:'OPERATING PAYMENTS',  color:'#dc2626', emoji:'📤' },
+  investing:         { label:'INVESTING ACTIVITIES', color:'#2563eb', emoji:'📈' },
+  financing:         { label:'FINANCING ACTIVITIES', color:'#7c3aed', emoji:'🏦' },
 };
 
 export default function CashFlowPage() {
@@ -112,18 +112,25 @@ export default function CashFlowPage() {
   const closingPrev = openBalancePrev + netChangePrev;
 
   const fmt = (n: number) => n === 0 ? '-' : n < 0 ? `(${Math.abs(n).toLocaleString('en-KE', { minimumFractionDigits: 2 })})` : n.toLocaleString('en-KE', { minimumFractionDigits: 2 });
-  const col = (n: number) => n < 0 ? '#ef4444' : n > 0 ? '#10b981' : '#7a90b8';
+  const col = (n: number) => n < 0 ? '#dc2626' : n > 0 ? '#059669' : '#475569';
 
   const types: CFRow['activity_type'][] = ['operating_receipt', 'operating_payment', 'investing', 'financing'];
+  const inputStyle = {background:'#eff6ff', border:'2px solid #93c5fd', borderRadius:8, color:'#0f172a', padding:'6px 10px', width:'100%'};
+  const tdContainerStyle = {padding:'8px', border:'2px dotted #93c5fd', borderRadius:8};
 
   return (
-    <div className="page-body">
+    <div className="page-body" style={{background:'#f0f5ff', minHeight:'100vh', padding:24}}>
       <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:24 }}>
         <div>
-          <h1 style={{ fontSize:22, fontWeight:800, color:'#e8edf8' }}>💧 Cash Flow Statement</h1>
-          <p style={{ color:'#7a90b8', fontSize:13, marginTop:4 }}>Statement of Cash Flows — FY {yearLabel}</p>
+          <h1 style={{ fontSize:22, fontWeight:800, color:'#0f172a' }}>💧 Cash Flow Statement</h1>
+          <p style={{ color:'#475569', fontSize:13, marginTop:4 }}>Statement of Cash Flows — FY {yearLabel}</p>
         </div>
         <button className="btn-success" onClick={save} disabled={saving}>{saving ? 'Saving…' : '💾 Save All'}</button>
+      </div>
+
+      <div style={{background:'#eff6ff', border:'1px solid #93c5fd', borderRadius:8, padding:'12px 16px', marginBottom:24, color:'#0f172a', display:'flex', alignItems:'center', gap:8}}>
+        <span style={{fontSize:20}}>💡</span>
+        <span><strong>How to use:</strong> Click on any white input cell in the Amount columns to enter your figures. Press Tab to move to next field. Click Save when done.</span>
       </div>
 
       {/* KPI Summary */}
@@ -141,29 +148,29 @@ export default function CashFlowPage() {
         ))}
       </div>
 
-      <div style={{ background:'#0d1526', border:'1px solid #1e2d4a', borderRadius:16, overflow:'hidden' }}>
+      <div style={{ background:'#fff', border:'1px solid #dde6f5', borderRadius:16, overflow:'hidden' }}>
         <div style={{ overflowX:'auto' }}>
-          <table className="data-grid">
+          <table className="data-grid" style={{width:'100%', borderCollapse:'collapse'}}>
             <thead>
-              <tr>
-                <th>Description</th>
-                <th style={{ width:180, textAlign:'right' }}>Enter Amount (KES)</th>
-                <th style={{ width:160, textAlign:'right' }}>Current Year</th>
-                <th style={{ width:160, textAlign:'right' }}>Previous Year</th>
+              <tr style={{background:'#f1f5fd', color:'#475569', textAlign:'left'}}>
+                <th style={{padding:'12px 16px'}}>Description</th>
+                <th style={{ width:180, textAlign:'right', padding:'12px 16px', color:'#0f172a', fontWeight:700 }}>✏️ Enter Amount (KES)</th>
+                <th style={{ width:160, textAlign:'right', padding:'12px 16px' }}>Current Year ✏️</th>
+                <th style={{ width:160, textAlign:'right', padding:'12px 16px' }}>Previous Year ✏️</th>
               </tr>
             </thead>
             <tbody>
               {/* Opening Balance */}
-              <tr className="row-section"><td colSpan={4} style={{ color:'#fbbf24', fontWeight:700 }}>💰 OPENING BALANCE</td></tr>
-              <tr>
-                <td style={{ paddingLeft:20 }}>Cash and cash equivalents at 1st July</td>
-                <td style={{ textAlign:'right' }}>
-                  <input className="cell-input" type="number" step="0.01" value={openBalance || ''} placeholder="0.00"
+              <tr style={{background:'#eef2ff', color:'#7c3aed'}}><td colSpan={4} style={{ color:'#d97706', fontWeight:700, padding:'8px 16px' }}>💰 OPENING BALANCE</td></tr>
+              <tr style={{transition:'background 0.2s'}} onMouseEnter={(e) => e.currentTarget.style.background = '#f5f8ff'} onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}>
+                <td style={{ paddingLeft:20, color:'#0f172a', padding:'12px 16px' }}>Cash and cash equivalents at 1st July</td>
+                <td style={tdContainerStyle}>
+                  <input style={inputStyle} type="number" step="0.01" value={openBalance || ''} placeholder="0.00"
                     onChange={e => setOpenBalance(parseFloat(e.target.value.replace(/,/g,'')) || 0)} />
                 </td>
-                <td style={{ textAlign:'right', color:'#fbbf24', fontWeight:600 }}>{fmt(openBalance)}</td>
-                <td style={{ textAlign:'right', color:'#7a90b8' }}>
-                  <input className="cell-input" type="number" step="0.01" value={openBalancePrev || ''} placeholder="0.00"
+                <td style={{ textAlign:'right', color:'#d97706', fontWeight:600, padding:'12px 16px' }}>{fmt(openBalance)}</td>
+                <td style={{...tdContainerStyle, textAlign:'right'}}>
+                  <input style={inputStyle} type="number" step="0.01" value={openBalancePrev || ''} placeholder="0.00"
                     onChange={e => setOpenBalancePrev(parseFloat(e.target.value.replace(/,/g,'')) || 0)} />
                 </td>
               </tr>
@@ -176,55 +183,49 @@ export default function CashFlowPage() {
                 const netPrev = isPayment ? -sum(items,'prev_amount') : sum(items,'prev_amount');
                 return (
                   <>
-                    <tr style={{ height:8 }}><td colSpan={4}></td></tr>
-                    <tr className="row-section" key={type+'-hdr'}>
-                      <td colSpan={4} style={{ color:meta.color, fontWeight:700 }}>{meta.emoji} {meta.label}</td>
+                    <tr style={{background:'#eef2ff', color:'#7c3aed'}} key={type+'-hdr'}>
+                      <td colSpan={4} style={{ color:meta.color, fontWeight:700, padding:'8px 16px' }}>{meta.emoji} {meta.label}</td>
                     </tr>
                     {items.map((row, i) => {
                       const globalIdx = rows.indexOf(row);
                       return (
-                        <tr key={row.description+i}>
-                          <td style={{ paddingLeft:20 }}>{row.description}</td>
-                          <td style={{ textAlign:'right' }}>
-                            <input className="cell-input" type="number" step="0.01" value={row.amount || ''} placeholder="0.00"
+                        <tr key={row.description+i} style={{transition:'background 0.2s'}} onMouseEnter={(e) => e.currentTarget.style.background = '#f5f8ff'} onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}>
+                          <td style={{ paddingLeft:20, color:'#0f172a', padding:'12px 16px' }}>{row.description}</td>
+                          <td style={tdContainerStyle}>
+                            <input style={inputStyle} type="number" step="0.01" value={row.amount || ''} placeholder="0.00"
                               onChange={e => upd(globalIdx, 'amount', e.target.value)} />
                           </td>
-                          <td style={{ textAlign:'right', color:meta.color, fontWeight:600 }}>{fmt(row.amount)}</td>
-                          <td style={{ textAlign:'right', color:'#7a90b8' }}>{fmt(row.prev_amount)}</td>
+                          <td style={{ textAlign:'right', color:meta.color, fontWeight:600, padding:'12px 16px' }}>{fmt(row.amount)}</td>
+                          <td style={{ textAlign:'right', color:'#475569', padding:'12px 16px' }}>{fmt(row.prev_amount)}</td>
                         </tr>
                       );
                     })}
-                    <tr className="row-total">
-                      <td style={{ fontWeight:700 }}>Net {meta.label.replace(' ACTIVITIES','').replace('OPERATING ','Operating ')}</td>
-                      <td></td>
-                      <td style={{ textAlign:'right', color:col(netCur), fontWeight:800 }}>{fmt(netCur)}</td>
-                      <td style={{ textAlign:'right', color:'#7a90b8', fontWeight:700 }}>{fmt(netPrev)}</td>
+                    <tr style={{background:'#f0f5ff'}}>
+                      <td style={{ fontWeight:700, color:'#0f172a', padding:'12px 16px' }}>Net {meta.label.replace(' ACTIVITIES','').replace('OPERATING ','Operating ')}</td>
+                      <td style={{padding:'12px 16px'}}></td>
+                      <td style={{ textAlign:'right', color:col(netCur), fontWeight:800, padding:'12px 16px' }}>{fmt(netCur)}</td>
+                      <td style={{ textAlign:'right', color:'#475569', fontWeight:700, padding:'12px 16px' }}>{fmt(netPrev)}</td>
                     </tr>
                   </>
                 );
               })}
 
               {/* Net Change */}
-              <tr style={{ height:12 }}><td colSpan={4}></td></tr>
-              <tr style={{ background:'linear-gradient(135deg,rgba(79,126,248,0.12),rgba(139,92,246,0.08))' }}>
-                <td style={{ fontWeight:800, fontSize:14 }}>Net Increase / (Decrease) in Cash</td>
-                <td></td>
-                <td style={{ textAlign:'right', color:col(netChangeCur), fontWeight:800, fontSize:16 }}>{fmt(netChangeCur)}</td>
-                <td style={{ textAlign:'right', color:col(netChangePrev), fontWeight:700 }}>{fmt(netChangePrev)}</td>
+              <tr style={{ background:'linear-gradient(135deg,rgba(37,99,235,0.08),rgba(124,58,237,0.05))' }}>
+                <td style={{ fontWeight:800, fontSize:14, color:'#0f172a', padding:'16px' }}>Net Increase / (Decrease) in Cash</td>
+                <td style={{padding:'16px'}}></td>
+                <td style={{ textAlign:'right', color:col(netChangeCur), fontWeight:800, fontSize:16, padding:'16px' }}>{fmt(netChangeCur)}</td>
+                <td style={{ textAlign:'right', color:col(netChangePrev), fontWeight:700, padding:'16px' }}>{fmt(netChangePrev)}</td>
               </tr>
-              <tr style={{ background:'linear-gradient(135deg,rgba(251,191,36,0.12),rgba(245,158,11,0.08))' }}>
-                <td style={{ fontWeight:800, fontSize:14 }}>Closing Cash Balance (30 June)</td>
-                <td></td>
-                <td style={{ textAlign:'right', color:col(closingCur), fontWeight:800, fontSize:16 }}>{fmt(closingCur)}</td>
-                <td style={{ textAlign:'right', color:col(closingPrev), fontWeight:700 }}>{fmt(closingPrev)}</td>
+              <tr style={{ background:'linear-gradient(135deg,rgba(245,158,11,0.12),rgba(245,158,11,0.08))' }}>
+                <td style={{ fontWeight:800, fontSize:14, color:'#0f172a', padding:'16px' }}>Closing Cash Balance (30 June)</td>
+                <td style={{padding:'16px'}}></td>
+                <td style={{ textAlign:'right', color:col(closingCur), fontWeight:800, fontSize:16, padding:'16px' }}>{fmt(closingCur)}</td>
+                <td style={{ textAlign:'right', color:col(closingPrev), fontWeight:700, padding:'16px' }}>{fmt(closingPrev)}</td>
               </tr>
             </tbody>
           </table>
         </div>
-      </div>
-
-      <div style={{ marginTop:16, padding:'12px 16px', background:'rgba(79,126,248,0.06)', border:'1px solid rgba(79,126,248,0.15)', borderRadius:10, fontSize:12, color:'#7a90b8' }}>
-        💡 <strong style={{ color:'#4f7ef8' }}>Tip:</strong> Enter amounts as positive numbers. Operating payments are automatically shown as outflows. The closing balance is auto-calculated: Opening + Net Change.
       </div>
     </div>
   );

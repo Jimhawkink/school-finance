@@ -83,26 +83,36 @@ export default function DashboardLayout({ children }:{children:React.ReactNode})
 
   return (
     <AppContext.Provider value={{ schoolId, yearId, yearLabel, schoolName, setYear:(id,lbl)=>{setYearId(id);setYearLabel(lbl);} }}>
-      <div style={{ display:'flex' }}>
+      <style>{`
+        .sidebar { background: #ffffff !important; border-right: 1px solid #dde6f5 !important; }
+        .sidebar-logo { background: #ffffff !important; }
+        .nav-item { color: #475569 !important; }
+        .nav-item:hover { background: #f0f5ff !important; }
+        .nav-item.active { color: #2563eb !important; background: #dbeafe !important; }
+        .nav-section-label { color: #94a3b8 !important; }
+        .page-header { background: #ffffff !important; border-bottom: 1px solid #dde6f5 !important; }
+        .main-content { background: #f0f5ff !important; }
+      `}</style>
+      <div style={{ display:'flex', minHeight: '100vh', background: '#f0f5ff' }}>
         {/* Sidebar */}
-        <div className="sidebar">
-          <div className="sidebar-logo">
+        <div className="sidebar" style={{ background: '#ffffff', borderRight: '1px solid #dde6f5' }}>
+          <div className="sidebar-logo" style={{ background: '#ffffff' }}>
             <div style={{ display:'flex', alignItems:'center', gap:12 }}>
-              <div style={{ width:38, height:38, background:'linear-gradient(135deg,#4f7ef8,#8b5cf6)', borderRadius:10, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
+              <div style={{ width:38, height:38, background:'linear-gradient(135deg,#2563eb,#7c3aed)', borderRadius:10, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
               </div>
               <div>
-                <div style={{ fontWeight:800, fontSize:14, color:'#e8edf8', lineHeight:1.2 }}>SchoolFinance</div>
-                <div style={{ fontSize:10, color:'#7a90b8', fontWeight:500 }}>Pro System</div>
+                <div style={{ fontWeight:800, fontSize:14, color:'#0f172a', lineHeight:1.2 }}>SchoolFinance</div>
+                <div style={{ fontSize:10, color:'#475569', fontWeight:500 }}>Pro System</div>
               </div>
             </div>
           </div>
 
           {/* Year selector */}
           {years.length > 0 && (
-            <div style={{ padding:'12px 16px', borderBottom:'1px solid #1e2d4a' }}>
-              <div style={{ fontSize:10, color:'#4a5f82', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:6 }}>Financial Year</div>
-              <select className="form-select" style={{ padding:'7px 12px', fontSize:13 }} value={yearId} onChange={e=>{
+            <div style={{ padding:'12px 16px', borderBottom:'1px solid #dde6f5', background: '#ffffff' }}>
+              <div style={{ fontSize:10, color:'#94a3b8', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.08em', marginBottom:6 }}>Financial Year</div>
+              <select className="form-select" style={{ padding:'7px 12px', fontSize:13, background: '#ffffff', color: '#0f172a', border: '1px solid #dde6f5' }} value={yearId} onChange={e=>{
                 const y=years.find((x:any)=>x.id===e.target.value);
                 if(y){setYearId(y.id);setYearLabel(y.year_label);}
               }}>
@@ -114,7 +124,7 @@ export default function DashboardLayout({ children }:{children:React.ReactNode})
           <nav className="sidebar-nav">
             {NAV.map(group => (
               <div key={group.section}>
-                <div className="nav-section-label">{group.section}</div>
+                <div className="nav-section-label" style={{ color: '#94a3b8' }}>{group.section}</div>
                 {group.items.map(item => (
                   <Link key={item.href} href={item.href} className={`nav-item ${pathname?.startsWith(item.href) ? 'active' : ''}`}>
                     <Icon name={item.icon} />
@@ -125,9 +135,9 @@ export default function DashboardLayout({ children }:{children:React.ReactNode})
             ))}
           </nav>
 
-          <div style={{ padding:'12px 16px', borderTop:'1px solid #1e2d4a' }}>
-            <div style={{ fontSize:12, color:'#7a90b8', marginBottom:10, fontWeight:500, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{user?.email}</div>
-            <button onClick={handleLogout} className="nav-item" style={{ color:'#ef4444', width:'100%' }}>
+          <div style={{ padding:'12px 16px', borderTop:'1px solid #dde6f5', background: '#ffffff' }}>
+            <div style={{ fontSize:12, color:'#475569', marginBottom:10, fontWeight:500, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{user?.email}</div>
+            <button onClick={handleLogout} className="nav-item" style={{ color:'#dc2626', width:'100%' }}>
               <Icon name="logout" />
               Sign Out
             </button>
@@ -135,12 +145,12 @@ export default function DashboardLayout({ children }:{children:React.ReactNode})
         </div>
 
         {/* Main */}
-        <div className="main-content" style={{ flex:1 }}>
+        <div className="main-content" style={{ flex:1, background: '#f0f5ff' }}>
           {/* Top bar */}
-          <div className="page-header no-print">
+          <div className="page-header no-print" style={{ background: '#ffffff', borderBottom: '1px solid #dde6f5' }}>
             <div>
-              <div style={{ fontWeight:700, fontSize:15, color:'#e8edf8' }}>{schoolName || 'Set up your school →'}</div>
-              <div style={{ fontSize:12, color:'#7a90b8' }}>Financial Year: {yearLabel || 'None selected'}</div>
+              <div style={{ fontWeight:700, fontSize:15, color:'#0f172a' }}>{schoolName || 'Set up your school →'}</div>
+              <div style={{ fontSize:12, color:'#475569' }}>Financial Year: {yearLabel || 'None selected'}</div>
             </div>
             <div style={{ display:'flex', gap:8 }}>
               <Link href="/reports" className="btn-primary" style={{ padding:'8px 16px', fontSize:13 }}>

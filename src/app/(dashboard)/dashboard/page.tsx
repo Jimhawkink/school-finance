@@ -55,9 +55,9 @@ export default function DashboardPage() {
       const actInc   = (bud.data||[]).filter((r:any)=>r.section==='income').reduce((s:number,r:any)=>s+(r.actual||0),0);
       const actExp   = (bud.data||[]).filter((r:any)=>r.section==='expense').reduce((s:number,r:any)=>s+(r.actual||0),0);
       setSummary({ totalReceipts:receipts, totalPayments:payments, surplus:receipts-payments, cashBalance:assets-liabs, totalAssets:assets, totalLiabilities:liabs, budgetIncome:budInc, budgetExpense:budExp, actualIncome:actInc, actualExpense:actExp });
-      const incColors = ['#4f7ef8','#8b5cf6','#10b981','#fbbf24','#f87171'];
+      const incColors = ['#2563eb','#7c3aed','#059669','#fbbf24','#f87171'];
       setIncomeRows((is.data||[]).filter((r:any)=>r.category==='receipt'&&r.amount>0).map((r:any,i:number)=>({ label:r.description.split('–').pop()?.trim()||r.vote_head, amount:r.amount, color:incColors[i%incColors.length] })));
-      const expColors = ['#ef4444','#f59e0b','#8b5cf6','#06b6d4'];
+      const expColors = ['#dc2626','#f59e0b','#7c3aed','#06b6d4'];
       setExpenseRows((is.data||[]).filter((r:any)=>r.category==='payment'&&r.amount>0).map((r:any,i:number)=>({ label:r.description, amount:r.amount, color:expColors[i%expColors.length] })));
     } finally { setLoading(false); }
   }
@@ -67,9 +67,9 @@ export default function DashboardPage() {
   const maxExp = Math.max(...expenseRows.map(r=>r.amount), 1);
 
   const quickLinks = [
-    { href:'/income-statement',  label:'Income Statement',  icon:'📝', color:'#4f7ef8',  desc:'Receipts & Payments' },
-    { href:'/balance-sheet',     label:'Balance Sheet',     icon:'⚖️', color:'#8b5cf6',  desc:'Assets & Liabilities' },
-    { href:'/cash-flow',         label:'Cash Flow',         icon:'💧', color:'#10b981',  desc:'Cash Movements' },
+    { href:'/income-statement',  label:'Income Statement',  icon:'📝', color:'#2563eb',  desc:'Receipts & Payments' },
+    { href:'/balance-sheet',     label:'Balance Sheet',     icon:'⚖️', color:'#7c3aed',  desc:'Assets & Liabilities' },
+    { href:'/cash-flow',         label:'Cash Flow',         icon:'💧', color:'#059669',  desc:'Cash Movements' },
     { href:'/budget',            label:'Budget Analysis',   icon:'🎯', color:'#f59e0b',  desc:'Budget vs Actual' },
     { href:'/notes/grants',      label:'Notes 1–5',         icon:'📋', color:'#06b6d4',  desc:'Grants & Income' },
     { href:'/notes/expenditure', label:'Notes 6–9',         icon:'📋', color:'#ec4899',  desc:'Expenditure Detail' },
@@ -80,27 +80,27 @@ export default function DashboardPage() {
   ];
 
   return (
-    <div className="page-body" style={{ maxWidth:'100%' }}>
+    <div className="page-body" style={{ maxWidth:'100%', padding: '24px' }}>
       <style>{`
         @keyframes shimmer { 0%{transform:translateX(-100%)} 100%{transform:translateX(200%)} }
-        @keyframes pulse-glow { 0%,100%{box-shadow:0 0 20px rgba(79,126,248,0.3)} 50%{box-shadow:0 0 40px rgba(79,126,248,0.6)} }
-        .ql-hover:hover { background: rgba(79,126,248,0.1) !important; border-color: rgba(79,126,248,0.3) !important; transform: translateY(-3px) !important; }
+        @keyframes pulse-glow { 0%,100%{box-shadow:0 0 20px rgba(37,99,235,0.15)} 50%{box-shadow:0 0 40px rgba(37,99,235,0.3)} }
+        .ql-hover:hover { background: #f0f5ff !important; border-color: rgba(37,99,235,0.2) !important; transform: translateY(-3px) !important; }
       `}</style>
 
       {/* Hero Banner */}
-      <div style={{ background:'linear-gradient(135deg,#0d1526 0%,#131f3a 50%,#0d1526 100%)', border:'1px solid #1e2d4a', borderRadius:20, padding:'28px 32px', marginBottom:28, position:'relative', overflow:'hidden' }}>
-        <div style={{ position:'absolute', top:-100, right:-100, width:400, height:400, background:'radial-gradient(circle,rgba(79,126,248,0.1) 0%,transparent 65%)', borderRadius:'50%', pointerEvents:'none' }} />
-        <div style={{ position:'absolute', bottom:-80, left:150, width:250, height:250, background:'radial-gradient(circle,rgba(139,92,246,0.08) 0%,transparent 70%)', borderRadius:'50%', pointerEvents:'none' }} />
+      <div style={{ background:'#ffffff', border:'1px solid #dde6f5', borderRadius:20, padding:'28px 32px', marginBottom:28, position:'relative', overflow:'hidden' }}>
+        <div style={{ position:'absolute', top:-100, right:-100, width:400, height:400, background:'radial-gradient(circle,rgba(37,99,235,0.05) 0%,transparent 65%)', borderRadius:'50%', pointerEvents:'none' }} />
+        <div style={{ position:'absolute', bottom:-80, left:150, width:250, height:250, background:'radial-gradient(circle,rgba(124,58,237,0.04) 0%,transparent 70%)', borderRadius:'50%', pointerEvents:'none' }} />
         <div style={{ position:'relative', zIndex:1, display:'flex', alignItems:'center', justifyContent:'space-between', flexWrap:'wrap', gap:20 }}>
           <div style={{ display:'flex', alignItems:'center', gap:16 }}>
-            <div style={{ width:56, height:56, background:'linear-gradient(135deg,#4f7ef8,#8b5cf6)', borderRadius:16, display:'flex', alignItems:'center', justifyContent:'center', fontSize:28, boxShadow:'0 12px 32px rgba(79,126,248,0.45)', animation:'pulse-glow 3s ease-in-out infinite' }}>🏫</div>
+            <div style={{ width:56, height:56, background:'linear-gradient(135deg,#2563eb,#7c3aed)', borderRadius:16, display:'flex', alignItems:'center', justifyContent:'center', fontSize:28, boxShadow:'0 12px 32px rgba(37,99,235,0.2)', animation:'pulse-glow 3s ease-in-out infinite' }}>🏫</div>
             <div>
-              <h1 style={{ fontSize:28, fontWeight:900, color:'#e8edf8', letterSpacing:'-0.5px', marginBottom:6 }}>{schoolName || 'SchoolFinance Pro'}</h1>
+              <h1 style={{ fontSize:28, fontWeight:900, color:'#0f172a', letterSpacing:'-0.5px', marginBottom:6 }}>{schoolName || 'SchoolFinance Pro'}</h1>
               <div style={{ display:'flex', alignItems:'center', gap:10 }}>
-                <span style={{ fontSize:12, color:'#4a5f82' }}>Financial Year</span>
-                <span style={{ fontSize:13, fontWeight:700, color:'#4f7ef8', background:'rgba(79,126,248,0.12)', padding:'3px 12px', borderRadius:8, border:'1px solid rgba(79,126,248,0.25)' }}>{yearLabel||'Not configured'}</span>
-                <span style={{ fontSize:12, color:'#4a5f82' }}>|</span>
-                <span style={{ fontSize:12, color:'#4a5f82' }}>{new Date().toLocaleDateString('en-KE',{weekday:'short',year:'numeric',month:'short',day:'numeric'})}</span>
+                <span style={{ fontSize:12, color:'#475569' }}>Financial Year</span>
+                <span style={{ fontSize:13, fontWeight:700, color:'#2563eb', background:'rgba(37,99,235,0.08)', padding:'3px 12px', borderRadius:8, border:'1px solid rgba(37,99,235,0.15)' }}>{yearLabel||'Not configured'}</span>
+                <span style={{ fontSize:12, color:'#475569' }}>|</span>
+                <span style={{ fontSize:12, color:'#475569' }}>{new Date().toLocaleDateString('en-KE',{weekday:'short',year:'numeric',month:'short',day:'numeric'})}</span>
               </div>
             </div>
           </div>
@@ -109,7 +109,7 @@ export default function DashboardPage() {
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
               Generate Report
             </Link>
-            <Link href="/setup" className="btn-ghost">⚙️ Setup</Link>
+            <Link href="/setup" className="btn-ghost" style={{ color:'#475569' }}>⚙️ Setup</Link>
           </div>
         </div>
       </div>
@@ -122,21 +122,21 @@ export default function DashboardPage() {
           { label:'Surplus / (Deficit)', value:summary.surplus, colorClass:summary.surplus>=0?'green':'red', icon:summary.surplus>=0?'🟢':'🔴', sub:'Net for the year', note:'Auto-calculated' },
           { label:'Net Financial Position', value:summary.cashBalance, colorClass:summary.cashBalance>=0?'blue':'red', icon:'🏦', sub:'Assets less Liabilities', note:'Balance Sheet' },
         ].map(k => (
-          <div key={k.label} className={`kpi-card ${k.colorClass}`}>
+          <div key={k.label} className={`kpi-card ${k.colorClass}`} style={{ background: '#ffffff', border: '1px solid #dde6f5', borderRadius: '16px', padding: '20px' }}>
             <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:14 }}>
               <div>
-                <div className="kpi-label">{k.label}</div>
-                <div className="kpi-sub" style={{ marginTop:2 }}>{k.sub}</div>
+                <div className="kpi-label" style={{ color: '#475569', fontSize: 13, fontWeight: 600 }}>{k.label}</div>
+                <div className="kpi-sub" style={{ marginTop:2, color: '#94a3b8', fontSize: 11 }}>{k.sub}</div>
               </div>
-              <span style={{ fontSize:26, filter:'drop-shadow(0 2px 8px rgba(0,0,0,0.3))' }}>{k.icon}</span>
+              <span style={{ fontSize:26, filter:'drop-shadow(0 2px 8px rgba(0,0,0,0.1))' }}>{k.icon}</span>
             </div>
-            <div style={{ fontSize:22, fontWeight:900, color:k.value<0?'#ef4444':k.value>0?'#10b981':'#7a90b8', lineHeight:1.1 }}>
-              {loading ? <span style={{ color:'#2a3f6a', fontSize:14 }}>Loading…</span> : <AnimatedNumber value={k.value} />}
+            <div style={{ fontSize:22, fontWeight:900, color:k.value<0?'#dc2626':k.value>0?'#059669':'#475569', lineHeight:1.1 }}>
+              {loading ? <span style={{ color:'#94a3b8', fontSize:14 }}>Loading…</span> : <AnimatedNumber value={k.value} />}
             </div>
-            <div style={{ marginTop:12, height:3, background:'rgba(255,255,255,0.07)', borderRadius:99 }}>
-              <div style={{ height:'100%', borderRadius:99, width: k.value>0?'100%':'30%', background:k.value<0?'linear-gradient(90deg,#ef4444,#dc2626)':'linear-gradient(90deg,#4f7ef8,#8b5cf6)', transition:'width 1.5s ease' }} />
+            <div style={{ marginTop:12, height:3, background:'rgba(0,0,0,0.06)', borderRadius:99 }}>
+              <div style={{ height:'100%', borderRadius:99, width: k.value>0?'100%':'30%', background:k.value<0?'linear-gradient(90deg,#dc2626,#ef4444)':'linear-gradient(90deg,#2563eb,#7c3aed)', transition:'width 1.5s ease' }} />
             </div>
-            <div style={{ fontSize:10, color:'#4a5f82', marginTop:6 }}>Source: {k.note}</div>
+            <div style={{ fontSize:10, color:'#94a3b8', marginTop:6 }}>Source: {k.note}</div>
           </div>
         ))}
       </div>
@@ -144,34 +144,34 @@ export default function DashboardPage() {
       {/* Budget + Health */}
       <div style={{ display:'grid', gridTemplateColumns:'3fr 2fr', gap:18, marginBottom:24 }}>
         {/* Budget Utilisation */}
-        <div style={{ background:'#0d1526', border:'1px solid #1e2d4a', borderRadius:18, padding:26 }}>
+        <div style={{ background:'#ffffff', border:'1px solid #dde6f5', borderRadius:18, padding:26 }}>
           <div style={{ display:'flex', alignItems:'center', gap:12, marginBottom:22 }}>
             <div style={{ width:40, height:40, background:'linear-gradient(135deg,#10b981,#059669)', borderRadius:12, display:'flex', alignItems:'center', justifyContent:'center', fontSize:20 }}>🎯</div>
             <div>
-              <div style={{ fontWeight:700, fontSize:16, color:'#e8edf8' }}>Budget Utilisation</div>
-              <div style={{ fontSize:12, color:'#7a90b8', marginTop:2 }}>Revised budget vs actual performance</div>
+              <div style={{ fontWeight:700, fontSize:16, color:'#0f172a' }}>Budget Utilisation</div>
+              <div style={{ fontSize:12, color:'#475569', marginTop:2 }}>Revised budget vs actual performance</div>
             </div>
           </div>
           {[
-            { label:'Income',        budget:summary.budgetIncome,  actual:summary.actualIncome,  col:'#10b981' },
-            { label:'Expenditure',   budget:summary.budgetExpense, actual:summary.actualExpense, col:'#ef4444' },
+            { label:'Income',        budget:summary.budgetIncome,  actual:summary.actualIncome,  col:'#059669' },
+            { label:'Expenditure',   budget:summary.budgetExpense, actual:summary.actualExpense, col:'#dc2626' },
           ].map(item => {
             const pct = utilPct(item.actual, item.budget);
-            const barColor = pct>100?'linear-gradient(90deg,#ef4444,#dc2626)':pct>80?'linear-gradient(90deg,#f59e0b,#d97706)':'linear-gradient(90deg,#10b981,#059669)';
+            const barColor = pct>100?'linear-gradient(90deg,#dc2626,#ef4444)':pct>80?'linear-gradient(90deg,#f59e0b,#d97706)':'linear-gradient(90deg,#10b981,#059669)';
             return (
               <div key={item.label} style={{ marginBottom:20 }}>
                 <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:8 }}>
-                  <span style={{ fontSize:14, fontWeight:600, color:'#e8edf8' }}>{item.label}</span>
+                  <span style={{ fontSize:14, fontWeight:600, color:'#0f172a' }}>{item.label}</span>
                   <div style={{ display:'flex', alignItems:'center', gap:10 }}>
-                    <span style={{ fontSize:12, color:'#7a90b8' }}>Budget: <span style={{ color:'#4f7ef8', fontWeight:700 }}>KES {(item.budget/1000).toFixed(0)}K</span></span>
-                    <span style={{ fontSize:12, color:'#7a90b8' }}>|</span>
-                    <span style={{ fontSize:12, color:'#7a90b8' }}>Actual: <span style={{ color:item.col, fontWeight:700 }}>KES {(item.actual/1000).toFixed(0)}K</span></span>
+                    <span style={{ fontSize:12, color:'#475569' }}>Budget: <span style={{ color:'#2563eb', fontWeight:700 }}>KES {(item.budget/1000).toFixed(0)}K</span></span>
+                    <span style={{ fontSize:12, color:'#475569' }}>|</span>
+                    <span style={{ fontSize:12, color:'#475569' }}>Actual: <span style={{ color:item.col, fontWeight:700 }}>KES {(item.actual/1000).toFixed(0)}K</span></span>
                     <span className={`badge ${pct>100?'badge-red':pct>80?'badge-gold':'badge-green'}`}>{pct}%</span>
                   </div>
                 </div>
-                <div style={{ background:'rgba(255,255,255,0.05)', borderRadius:99, height:12, overflow:'hidden', position:'relative' }}>
+                <div style={{ background:'rgba(0,0,0,0.06)', borderRadius:99, height:12, overflow:'hidden', position:'relative' }}>
                   <div style={{ height:'100%', borderRadius:99, width:`${Math.min(pct,100)}%`, background:barColor, transition:'width 1.4s ease', position:'relative', overflow:'hidden' }}>
-                    <div style={{ position:'absolute', inset:0, background:'linear-gradient(90deg,transparent,rgba(255,255,255,0.25),transparent)', animation:'shimmer 2.5s ease-in-out infinite' }} />
+                    <div style={{ position:'absolute', inset:0, background:'linear-gradient(90deg,transparent,rgba(255,255,255,0.4),transparent)', animation:'shimmer 2.5s ease-in-out infinite' }} />
                   </div>
                 </div>
               </div>
@@ -180,12 +180,12 @@ export default function DashboardPage() {
         </div>
 
         {/* Financial Health */}
-        <div style={{ background:'#0d1526', border:'1px solid #1e2d4a', borderRadius:18, padding:26 }}>
+        <div style={{ background:'#ffffff', border:'1px solid #dde6f5', borderRadius:18, padding:26 }}>
           <div style={{ display:'flex', alignItems:'center', gap:12, marginBottom:22 }}>
-            <div style={{ width:40, height:40, background:'linear-gradient(135deg,#8b5cf6,#6d28d9)', borderRadius:12, display:'flex', alignItems:'center', justifyContent:'center', fontSize:20 }}>💊</div>
+            <div style={{ width:40, height:40, background:'linear-gradient(135deg,#7c3aed,#6d28d9)', borderRadius:12, display:'flex', alignItems:'center', justifyContent:'center', fontSize:20 }}>💊</div>
             <div>
-              <div style={{ fontWeight:700, fontSize:16, color:'#e8edf8' }}>Financial Health</div>
-              <div style={{ fontSize:12, color:'#7a90b8', marginTop:2 }}>Key ratios & indicators</div>
+              <div style={{ fontWeight:700, fontSize:16, color:'#0f172a' }}>Financial Health</div>
+              <div style={{ fontSize:12, color:'#475569', marginTop:2 }}>Key ratios & indicators</div>
             </div>
           </div>
           {[
@@ -194,9 +194,9 @@ export default function DashboardPage() {
             { label:'Income Budget Hit',       val: utilPct(summary.actualIncome,summary.budgetIncome), unit:'%', good:(v:number)=>v>=80 },
             { label:'Assets / Liabilities',    val: summary.totalLiabilities>0?+(summary.totalAssets/summary.totalLiabilities).toFixed(2):0, unit:'x', good:(v:number)=>v>1 },
           ].map(item => (
-            <div key={item.label} style={{ display:'flex', justifyContent:'space-between', alignItems:'center', padding:'11px 14px', background:'rgba(255,255,255,0.03)', borderRadius:10, marginBottom:8, border:'1px solid rgba(255,255,255,0.04)' }}>
-              <span style={{ fontSize:12, color:'#7a90b8' }}>{item.label}</span>
-              <span style={{ fontSize:16, fontWeight:800, color: item.good(item.val)?'#10b981':'#ef4444' }}>{item.val}{item.unit}</span>
+            <div key={item.label} style={{ display:'flex', justifyContent:'space-between', alignItems:'center', padding:'11px 14px', background:'rgba(37,99,235,0.03)', borderRadius:10, marginBottom:8, border:'1px solid rgba(0,0,0,0.04)' }}>
+              <span style={{ fontSize:12, color:'#475569' }}>{item.label}</span>
+              <span style={{ fontSize:16, fontWeight:800, color: item.good(item.val)?'#059669':'#dc2626' }}>{item.val}{item.unit}</span>
             </div>
           ))}
         </div>
@@ -208,25 +208,25 @@ export default function DashboardPage() {
           { title:'Income Breakdown', subtitle:'By vote head', rows:incomeRows, max:maxInc, empty:'No income data yet — go to Income Statement' },
           { title:'Expenditure Breakdown', subtitle:'By category',  rows:expenseRows, max:maxExp, empty:'No expenditure data yet — go to Income Statement' },
         ].map(chart => (
-          <div key={chart.title} style={{ background:'#0d1526', border:'1px solid #1e2d4a', borderRadius:18, padding:26 }}>
+          <div key={chart.title} style={{ background:'#ffffff', border:'1px solid #dde6f5', borderRadius:18, padding:26 }}>
             <div style={{ marginBottom:20 }}>
-              <div style={{ fontWeight:700, fontSize:16, color:'#e8edf8' }}>{chart.title}</div>
-              <div style={{ fontSize:12, color:'#7a90b8', marginTop:2 }}>{chart.subtitle}</div>
+              <div style={{ fontWeight:700, fontSize:16, color:'#0f172a' }}>{chart.title}</div>
+              <div style={{ fontSize:12, color:'#475569', marginTop:2 }}>{chart.subtitle}</div>
             </div>
             {chart.rows.length===0 ? (
               <div style={{ padding:'36px 0', textAlign:'center' }}>
                 <div style={{ fontSize:36, marginBottom:10 }}>📊</div>
-                <div style={{ fontSize:13, color:'#4a5f82' }}>{chart.empty}</div>
+                <div style={{ fontSize:13, color:'#94a3b8' }}>{chart.empty}</div>
               </div>
             ) : chart.rows.map((row,i) => {
               const pct = Math.round((row.amount/chart.max)*100);
               return (
                 <div key={i} style={{ marginBottom:14 }}>
                   <div style={{ display:'flex', justifyContent:'space-between', marginBottom:6 }}>
-                    <span style={{ fontSize:12, color:'#e8edf8', fontWeight:500 }}>{row.label}</span>
+                    <span style={{ fontSize:12, color:'#0f172a', fontWeight:500 }}>{row.label}</span>
                     <span style={{ fontSize:12, fontWeight:700, color:row.color }}>KES {row.amount.toLocaleString('en-KE')}</span>
                   </div>
-                  <div style={{ background:'rgba(255,255,255,0.05)', borderRadius:99, height:9, overflow:'hidden' }}>
+                  <div style={{ background:'rgba(0,0,0,0.06)', borderRadius:99, height:9, overflow:'hidden' }}>
                     <div style={{ height:'100%', width:`${pct}%`, borderRadius:99, background:`linear-gradient(90deg,${row.color},${row.color}99)`, transition:'width 1.2s ease' }} />
                   </div>
                 </div>
@@ -237,23 +237,21 @@ export default function DashboardPage() {
       </div>
 
       {/* Quick Access */}
-      <div style={{ background:'#0d1526', border:'1px solid #1e2d4a', borderRadius:18, padding:26 }}>
+      <div style={{ background:'#ffffff', border:'1px solid #dde6f5', borderRadius:18, padding:26 }}>
         <div style={{ display:'flex', alignItems:'center', gap:12, marginBottom:22 }}>
-          <div style={{ width:40, height:40, background:'linear-gradient(135deg,#4f7ef8,#7c3aed)', borderRadius:12, display:'flex', alignItems:'center', justifyContent:'center', fontSize:20 }}>⚡</div>
+          <div style={{ width:40, height:40, background:'linear-gradient(135deg,#2563eb,#7c3aed)', borderRadius:12, display:'flex', alignItems:'center', justifyContent:'center', fontSize:20 }}>⚡</div>
           <div>
-            <div style={{ fontWeight:700, fontSize:16, color:'#e8edf8' }}>Quick Data Entry</div>
-            <div style={{ fontSize:12, color:'#7a90b8', marginTop:2 }}>Jump directly to any section of the financial statements</div>
+            <div style={{ fontWeight:700, fontSize:16, color:'#0f172a' }}>Quick Data Entry</div>
+            <div style={{ fontSize:12, color:'#475569', marginTop:2 }}>Jump directly to any section of the financial statements</div>
           </div>
         </div>
         <div style={{ display:'grid', gridTemplateColumns:'repeat(5,1fr)', gap:12 }}>
           {quickLinks.map(link => (
             <Link key={link.href} href={link.href} style={{ textDecoration:'none' }}>
-              <div style={{ background:'rgba(255,255,255,0.025)', border:'1px solid #1e2d4a', borderRadius:14, padding:'18px 12px', textAlign:'center', transition:'all 0.2s ease', cursor:'pointer' }}
-                onMouseEnter={e=>{const el=e.currentTarget as HTMLDivElement;el.style.background=`${link.color}15`;el.style.borderColor=`${link.color}40`;el.style.transform='translateY(-4px)';el.style.boxShadow=`0 12px 32px ${link.color}20`;}}
-                onMouseLeave={e=>{const el=e.currentTarget as HTMLDivElement;el.style.background='rgba(255,255,255,0.025)';el.style.borderColor='#1e2d4a';el.style.transform='none';el.style.boxShadow='none';}}>
-                <div style={{ fontSize:28, marginBottom:8, filter:'drop-shadow(0 2px 6px rgba(0,0,0,0.4))' }}>{link.icon}</div>
-                <div style={{ fontSize:12, fontWeight:700, color:'#e8edf8', marginBottom:4, lineHeight:1.3 }}>{link.label}</div>
-                <div style={{ fontSize:10, color:'#4a5f82', lineHeight:1.4 }}>{link.desc}</div>
+              <div className="ql-hover" style={{ background:'#ffffff', border:'1px solid #dde6f5', borderRadius:14, padding:'18px 12px', textAlign:'center', transition:'all 0.2s ease', cursor:'pointer' }}>
+                <div style={{ fontSize:28, marginBottom:8, filter:'drop-shadow(0 2px 4px rgba(0,0,0,0.1))' }}>{link.icon}</div>
+                <div style={{ fontSize:12, fontWeight:700, color:'#0f172a', marginBottom:4, lineHeight:1.3 }}>{link.label}</div>
+                <div style={{ fontSize:10, color:'#475569', lineHeight:1.4 }}>{link.desc}</div>
               </div>
             </Link>
           ))}
